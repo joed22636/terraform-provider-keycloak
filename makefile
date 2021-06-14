@@ -12,6 +12,10 @@ build-example: build
 	cp terraform-provider-keycloak example/.terraform/plugins/terraform.local/mrparkers/keycloak/3.0.0/darwin_amd64/
 	cp terraform-provider-keycloak example/terraform.d/plugins/terraform.local/mrparkers/keycloak/3.0.0/darwin_amd64/
 
+build-win: build
+	-mkdir providers\registry.terraform.io\mrparkers\keycloak\99.0.0\windows_amd64
+	copy terraform-provider-keycloak providers\registry.terraform.io\mrparkers\keycloak\99.0.0\windows_amd64\terraform-provider-keycloak.exe
+	
 local: deps
 	docker-compose up --build -d
 	./scripts/wait-for-local-keycloak.sh

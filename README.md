@@ -103,3 +103,10 @@ make testacc
 ## License
 
 [MIT](https://github.com/mrparkers/terraform-provider-keycloak/blob/master/LICENSE)
+
+
+# Branch notes
+
+* Test the built provider
+* Test a changed behavior
+* Run dev tests

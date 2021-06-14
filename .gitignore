@@ -29,3 +29,4 @@ site/
 *.zip
 
 .DS_Store
+e2e-test/.terraform.lock.hcl

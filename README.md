@@ -83,7 +83,19 @@ This environment and its setup via `make local` is not intended for production u
 
 Note: The setup scripts require the [jq](https://stedolan.github.io/jq/) command line utility.
 
+#### Macos: 
+```
+brew install jq
+brew install terraform@0.13
+```
+
 ### Tests
+
+Result strings:
+```
+--- PASS
+--- FAIL
+```
 
 Every resource supported by this provider will have a reasonable amount of acceptance test coverage.
 
@@ -97,7 +109,17 @@ KEYCLOAK_CLIENT_SECRET=884e0f95-0f42-4a63-9b1f-94274655669e \
 KEYCLOAK_CLIENT_TIMEOUT=5 \
 KEYCLOAK_REALM=master \
 KEYCLOAK_URL="http://localhost:8080" \
-make testacc
+make test > test.log
+```
+
+
+```
+KEYCLOAK_CLIENT_ID=terraform \
+KEYCLOAK_CLIENT_SECRET=884e0f95-0f42-4a63-9b1f-94274655669e \
+KEYCLOAK_CLIENT_TIMEOUT=5 \
+KEYCLOAK_REALM=master \
+KEYCLOAK_URL="http://localhost:8080" \
+make testacc > testacc.log
 ```
 
 ## License

@@ -128,7 +128,3 @@ make testacc > testacc.log
 
 
 # Branch notes
-
-* Test the built provider
-* Test a changed behavior
-* Run dev tests

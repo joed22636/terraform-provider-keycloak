@@ -2,12 +2,14 @@ package provider
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"os"
-	"testing"
 )
 
 var testAccProviderFactories map[string]func() (*schema.Provider, error)
@@ -24,8 +26,26 @@ var requiredEnvironmentVariables = []string{
 	"KEYCLOAK_URL",
 }
 
+var requiredEnvironmentVariablesDefaultValues = map[string]string{
+	"KEYCLOAK_CLIENT_ID":      "terraform",
+	"KEYCLOAK_CLIENT_SECRET":  "884e0f95-0f42-4a63-9b1f-94274655669e",
+	"KEYCLOAK_CLIENT_TIMEOUT": "5",
+	"KEYCLOAK_REALM":          "master",
+	"KEYCLOAK_URL":            "http://localhost:8080",
+}
+
 func init() {
 	userAgent := fmt.Sprintf("HashiCorp Terraform/%s (+https://www.terraform.io) Terraform Plugin SDK/%s", schema.Provider{}.TerraformVersion, meta.SDKVersionString())
+
+	for _, requiredEnvironmentVariable := range requiredEnvironmentVariables {
+		if value := os.Getenv(requiredEnvironmentVariable); value == "" {
+			os.Setenv(requiredEnvironmentVariable, requiredEnvironmentVariablesDefaultValues[requiredEnvironmentVariable])
+			log.Println("LZA - " + requiredEnvironmentVariable + " set to " + requiredEnvironmentVariablesDefaultValues[requiredEnvironmentVariable])
+		}
+	}
+
+	os.Setenv("TF_ACC", "1")
+
 	keycloakClient, _ = keycloak.NewKeycloakClient(os.Getenv("KEYCLOAK_URL"), "/auth", os.Getenv("KEYCLOAK_CLIENT_ID"), os.Getenv("KEYCLOAK_CLIENT_SECRET"), os.Getenv("KEYCLOAK_REALM"), "", "", true, 5, "", false, userAgent, map[string]string{
 		"foo": "bar",
 	})

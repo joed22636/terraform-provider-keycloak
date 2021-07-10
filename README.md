@@ -91,13 +91,11 @@ brew install terraform@0.13
 
 ### Tests
 
-Result strings:
-```
---- PASS
---- FAIL
-```
-
 Every resource supported by this provider will have a reasonable amount of acceptance test coverage.
+
+```
+make local
+```
 
 You can run acceptance tests against a Keycloak instance by running `make testacc`. You will need to supply some environment
 variables in order to set up the provider during tests. Here is an example for running tests against a local environment
@@ -114,12 +112,19 @@ make test > test.log
 
 
 ```
-KEYCLOAK_CLIENT_ID=terraform \
-KEYCLOAK_CLIENT_SECRET=884e0f95-0f42-4a63-9b1f-94274655669e \
-KEYCLOAK_CLIENT_TIMEOUT=5 \
-KEYCLOAK_REALM=master \
-KEYCLOAK_URL="http://localhost:8080" \
 make testacc > testacc.log
+```
+
+Result strings:
+```
+--- PASS
+--- FAIL
+```
+
+Run specific test from CLI:
+```
+go test -v -run <name> <package>
+go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./provider
 ```
 
 ## License
@@ -128,3 +133,28 @@ make testacc > testacc.log
 
 
 # Branch notes
+
+1st goal: fix default/optional client scope issue  - even if there is no change the provider want to update these always 
+
+branch: feature/update-local-provider - also in the terraform-importer
+
+
+Log info  - `TF_LOG` needs to be set 
+
+
+test failure: TestAccKeycloakOpenidClientOptionalScopes_profileAndEmailOptionalScopes
+  provider_test.go init()
+    create map - 
+
+    go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./provider
+    go test -v -run TestAccKeycloakDataSourceRealm_* ./provider
+
+    --- FAIL: TestAccKeycloakApiClientRefresh (0.00s) ??? 
+    --- FAIL: TestAccKeycloakOpenidClientOptionalScopes_profileAndEmailOptionalScopes (2.07s) -- done
+    --- FAIL: TestAccKeycloakOpenidClientDefaultScopes_profileAndEmailDefaultScopes (1.81s) -- done
+    --- FAIL: TestAccKeycloakSamlClientDefaultScopes_profileAndEmailDefaultScopes (1.70s)
+    --- FAIL: TestAccKeycloakCustomUserFederation_createAfterManualDestroy (1.17s)
+    	t.Skip("Custom user federation is not a use-case for us")
+
+    --- FAIL: TestAccKeycloakCustomUserFederation_customConfig (1.23s)
+    --- FAIL: TestAccKeycloakCustomUserFederation_basic (1.31s)

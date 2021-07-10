@@ -171,6 +171,22 @@ func (keycloakClient *KeycloakClient) DeleteAuthenticationExecution(realmId, id 
 	return nil
 }
 
+func (keycloakClient *KeycloakClient) DeleteDefaultDefaultClientScope(realmId string, id string) error {
+	return keycloakClient.delete(fmt.Sprintf("/realms/%s/default-default-client-scopes/%s", realmId, id), nil)
+}
+
+func (keycloakClient *KeycloakClient) AddDefaultDefaultClientScope(realmId string, dcs DefaultClientScope) error {
+	return keycloakClient.put(fmt.Sprintf("/realms/%s/default-default-client-scopes/%s", realmId, dcs.Id), dcs)
+}
+
+func (keycloakClient *KeycloakClient) DeleteOptionalDefaultClientScope(realmId string, id string) error {
+	return keycloakClient.delete(fmt.Sprintf("/realms/%s/default-optional-client-scopes/%s", realmId, id), nil)
+}
+
+func (keycloakClient *KeycloakClient) AddOptionalDefaultClientScope(realmId string, dcs DefaultClientScope) error {
+	return keycloakClient.put(fmt.Sprintf("/realms/%s/default-optional-client-scopes/%s", realmId, dcs.Id), dcs)
+}
+
 func (keycloakClient *KeycloakClient) RaiseAuthenticationExecutionPriority(realmId, id string) error {
 	_, _, err := keycloakClient.post(fmt.Sprintf("/realms/%s/authentication/executions/%s/raise-priority", realmId, id), nil)
 	if err != nil {

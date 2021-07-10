@@ -2,12 +2,13 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"regexp"
-	"testing"
 )
 
 func TestAccKeycloakRealm_basic(t *testing.T) {
@@ -702,7 +703,30 @@ func TestAccKeycloakRealm_internalId(t *testing.T) {
 	})
 }
 
+// due to cyclic dependency, currently only the hard-coded realm scopes can be used as default client scopes
 func TestAccKeycloakRealm_default_client_scopes(t *testing.T) {
+	realmName := acctest.RandomWithPrefix("tf-acc")
+	defaultDefaultClientScope := []string{"profile"}
+	defaultOptionalClientScope := []string{"email", "roles"}
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakRealmDestroy(),
+		Steps: []resource.TestStep{
+			{
+				ResourceName: "keycloak_realm.realm",
+				Config:       testKeycloakRealm_default_client_scopes(realmName, defaultDefaultClientScope, defaultOptionalClientScope),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("keycloak_realm.realm", "enabled", "true"),
+					testAccCheckKeycloakRealm_default_client_scopes("keycloak_realm.realm", defaultDefaultClientScope, defaultOptionalClientScope),
+				),
+			},
+		},
+	})
+}
+
+func TestAccKeycloakRealm_default_client_scopes_import(t *testing.T) {
 
 	realmName := acctest.RandomWithPrefix("tf-acc")
 	defaultDefaultClientScope := []string{"profile"}
@@ -789,6 +813,8 @@ func testAccCheckKeycloakRealm_default_client_scopes(resourceName string, defaul
 			if len(realm.DefaultDefaultClientScopes) != 0 {
 				return fmt.Errorf("expected realm %s to have empty default default client scopes but was %s", realm.Realm, realm.DefaultDefaultClientScopes)
 			}
+		} else if len(defaultDefaultClientScope) != len(realm.DefaultDefaultClientScopes) {
+			return fmt.Errorf("expected realm %s to have default default client scopes with value %s but was %s", realm.Realm, defaultDefaultClientScope, realm.DefaultDefaultClientScopes)
 		} else {
 			for _, expectedScope := range defaultDefaultClientScope {
 				found := false
@@ -808,6 +834,8 @@ func testAccCheckKeycloakRealm_default_client_scopes(resourceName string, defaul
 			if len(realm.DefaultOptionalClientScopes) != 0 {
 				return fmt.Errorf("expected realm %s to have empty default optional client scopes but was %s", realm.Realm, realm.DefaultOptionalClientScopes)
 			}
+		} else if len(defaultOptionalClientScope) != len(realm.DefaultOptionalClientScopes) {
+			return fmt.Errorf("expected realm %s to have default default client scopes with value %s but was %s", realm.Realm, defaultOptionalClientScope, realm.DefaultOptionalClientScopes)
 		} else {
 			for _, expectedScope := range defaultOptionalClientScope {
 				found := false

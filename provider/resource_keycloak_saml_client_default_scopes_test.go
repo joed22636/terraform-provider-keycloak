@@ -258,7 +258,7 @@ func TestAccKeycloakSamlClientDefaultScopes_profileAndEmailDefaultScopes(t *test
 		Steps: []resource.TestStep{
 			{
 				Config:             testKeycloakSamlClientDefaultScopes_listOfScopes(client, clientScope, []string{clientScope}),
-				Check:              testAccCheckKeycloakSamlClientHasDefaultScopes("keycloak_saml_client.client", append(preAssignedDefaultSamlClientScopes, clientScope)),
+				Check:              testAccCheckKeycloakSamlClientHasDefaultScopes("keycloak_saml_client.client", []string{clientScope}),
 				ExpectNonEmptyPlan: true,
 			},
 		},

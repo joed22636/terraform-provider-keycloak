@@ -2,13 +2,14 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"regexp"
-	"strings"
-	"testing"
 )
 
 // All openid clients in Keycloak will automatically have these scopes listed as "default client scopes".
@@ -274,7 +275,7 @@ func TestAccKeycloakOpenidClientDefaultScopes_profileAndEmailDefaultScopes(t *te
 		Steps: []resource.TestStep{
 			{
 				Config:             testKeycloakOpenidClientDefaultScopes_listOfScopes(client, clientScope, []string{clientScope}),
-				Check:              testAccCheckKeycloakOpenidClientHasDefaultScopes("keycloak_openid_client.client", append(preAssignedDefaultClientScopes, clientScope)),
+				Check:              testAccCheckKeycloakOpenidClientHasDefaultScopes("keycloak_openid_client.client", []string{clientScope}),
 				ExpectNonEmptyPlan: true,
 			},
 		},

@@ -133,28 +133,3 @@ go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./p
 
 
 # Branch notes
-
-1st goal: fix default/optional client scope issue  - even if there is no change the provider want to update these always 
-
-branch: feature/update-local-provider - also in the terraform-importer
-
-
-Log info  - `TF_LOG` needs to be set 
-
-
-test failure: TestAccKeycloakOpenidClientOptionalScopes_profileAndEmailOptionalScopes
-  provider_test.go init()
-    create map - 
-
-    go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./provider
-    go test -v -run TestAccKeycloakDataSourceRealm_* ./provider
-
-    --- FAIL: TestAccKeycloakApiClientRefresh (0.00s) ??? 
-    --- FAIL: TestAccKeycloakOpenidClientOptionalScopes_profileAndEmailOptionalScopes (2.07s) -- done
-    --- FAIL: TestAccKeycloakOpenidClientDefaultScopes_profileAndEmailDefaultScopes (1.81s) -- done
-    --- FAIL: TestAccKeycloakSamlClientDefaultScopes_profileAndEmailDefaultScopes (1.70s)
-    --- FAIL: TestAccKeycloakCustomUserFederation_createAfterManualDestroy (1.17s)
-    	t.Skip("Custom user federation is not a use-case for us")
-
-    --- FAIL: TestAccKeycloakCustomUserFederation_customConfig (1.23s)
-    --- FAIL: TestAccKeycloakCustomUserFederation_basic (1.31s)

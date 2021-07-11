@@ -132,4 +132,18 @@ go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./p
 [MIT](https://github.com/mrparkers/terraform-provider-keycloak/blob/master/LICENSE)
 
 
+# TODO
+
+* executors are duplicated 
+* built in flow property is not kept
+* [done] hardcoded clients are still giving errors
+* [done] hardcoded clients scopes still giving errors (keycloak_openid_client_scope)
+* [done] hardcoded roles still giving errors (keycloak_role)
+* [done] create->conflict->update error handing
+* [done] revisit validations (root url, etc)
+* [done] Error: validation error: a protocol mapper with name full name already exists for this client
+    keycloak_generic_client_protocol_mapper
+* inconsistency in authentication bindings handing -> remove from realm
+    go test -v -run TestAccKeycloakRealm ./provider
+
 # Branch notes

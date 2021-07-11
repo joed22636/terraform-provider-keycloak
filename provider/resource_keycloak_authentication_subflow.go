@@ -1,11 +1,14 @@
 package provider
 
 import (
+	"errors"
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"strings"
 )
 
 func resourceKeycloakAuthenticationSubFlow() *schema.Resource {
@@ -93,7 +96,26 @@ func resourceKeycloakAuthenticationSubFlowCreate(data *schema.ResourceData, meta
 
 	err := keycloakClient.NewAuthenticationSubFlow(authenticationFlow)
 	if err != nil {
-		return err
+		var ae *keycloak.ApiError
+		if !errors.As(err, &ae) {
+			return err
+		}
+
+		if ae.Code != 409 {
+			return err
+		}
+
+		log.Println("flow already exists, may be hardcoded flow, try to update")
+		flow, err1 := keycloakClient.GetAuthenticationSubFlowByAlias(authenticationFlow.RealmId, authenticationFlow.ParentFlowAlias, authenticationFlow.Alias)
+		if err1 != nil {
+			return err1
+		}
+		data.SetId(flow.Id)
+		authenticationFlow.Id = flow.Id
+		err = resourceKeycloakAuthenticationSubFlowUpdate(data, meta)
+		if err != nil {
+			return err
+		}
 	}
 	mapFromAuthenticationSubFlowToData(data, authenticationFlow)
 	return resourceKeycloakAuthenticationSubFlowRead(data, meta)
@@ -134,7 +156,26 @@ func resourceKeycloakAuthenticationSubFlowDelete(data *schema.ResourceData, meta
 	parentFlowAlias := data.Get("parent_flow_alias").(string)
 	id := data.Id()
 
-	return keycloakClient.DeleteAuthenticationSubFlow(realmId, parentFlowAlias, id)
+	err := keycloakClient.DeleteAuthenticationSubFlow(realmId, parentFlowAlias, id)
+	if err != nil {
+		if err != nil {
+			var ae *keycloak.ApiError
+			if !errors.As(err, &ae) {
+				return err
+			}
+
+			if ae.Code != 400 {
+				return err
+			}
+
+			if !strings.Contains(ae.Message, "It is illegal to remove execution from a built in flow") {
+				return err
+			}
+
+			log.Println("build-in flows cannot be deleted, ignore error")
+		}
+	}
+	return nil
 }
 
 func resourceKeycloakAuthenticationSubFlowImport(d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {

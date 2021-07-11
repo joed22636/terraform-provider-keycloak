@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/customdiff"
@@ -236,17 +237,17 @@ func getOpenidClientFromData(data *schema.ResourceData) (*keycloak.OpenidClient,
 	}
 
 	// Keycloak uses the root URL for web origins if not specified otherwise
-	if rootUrlOk && rootUrlString != "" {
-		if !validRedirectUrisOk {
-			return nil, errors.New("valid_redirect_uris is required when root_url is given1")
-		}
-		if !webOriginsOk {
-			return nil, errors.New("web_origins is required when root_url is given")
-		}
-		if _, adminOk := data.GetOk("admin_url"); !adminOk {
-			return nil, errors.New("admin_url is required when root_url is given")
-		}
-	}
+	// if rootUrlOk && rootUrlString != "" {
+	// 	if !validRedirectUrisOk {
+	// 		return nil, errors.New("valid_redirect_uris is required when root_url is given1")
+	// 	}
+	// 	if !webOriginsOk {
+	// 		return nil, errors.New("web_origins is required when root_url is given")
+	// 	}
+	// 	if _, adminOk := data.GetOk("admin_url"); !adminOk {
+	// 		return nil, errors.New("admin_url is required when root_url is given")
+	// 	}
+	// }
 
 	openidClient := &keycloak.OpenidClient{
 		Id:                        data.Id(),
@@ -403,7 +404,26 @@ func resourceKeycloakOpenidClientCreate(data *schema.ResourceData, meta interfac
 
 	err = keycloakClient.NewOpenidClient(client)
 	if err != nil {
-		return err
+		var ae *keycloak.ApiError
+		if !errors.As(err, &ae) {
+			return err
+		}
+
+		if ae.Code != 409 {
+			return err
+		}
+
+		log.Println("resource already exists, may be hardcoded, try to update")
+		cli, err1 := keycloakClient.GetOpenidClientByClientId(client.RealmId, client.ClientId)
+		if err1 != nil {
+			return err1
+		}
+		data.SetId(cli.Id)
+		client.Id = cli.Id
+		err = resourceKeycloakOpenidClientUpdate(data, meta)
+		if err != nil {
+			return err
+		}
 	}
 
 	err = setOpenidClientData(keycloakClient, data, client)

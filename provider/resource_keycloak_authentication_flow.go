@@ -1,11 +1,14 @@
 package provider
 
 import (
+	"errors"
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"strings"
 )
 
 func resourceKeycloakAuthenticationFlow() *schema.Resource {
@@ -73,8 +76,28 @@ func resourceKeycloakAuthenticationFlowCreate(data *schema.ResourceData, meta in
 	authenticationFlow := mapFromDataToAuthenticationFlow(data)
 
 	err := keycloakClient.NewAuthenticationFlow(authenticationFlow)
+
 	if err != nil {
-		return err
+		var ae *keycloak.ApiError
+		if !errors.As(err, &ae) {
+			return err
+		}
+
+		if ae.Code != 409 {
+			return err
+		}
+
+		log.Println("flow already exists, may be hardcoded flow, try to update")
+		flow, err1 := keycloakClient.GetAuthenticationFlowFromAlias(authenticationFlow.RealmId, authenticationFlow.Alias)
+		if err1 != nil {
+			return err1
+		}
+		data.SetId(flow.Id)
+		authenticationFlow.Id = flow.Id
+		err = resourceKeycloakAuthenticationFlowUpdate(data, meta)
+		if err != nil {
+			return err
+		}
 	}
 
 	mapFromAuthenticationFlowToData(data, authenticationFlow)
@@ -116,7 +139,27 @@ func resourceKeycloakAuthenticationFlowDelete(data *schema.ResourceData, meta in
 	realmId := data.Get("realm_id").(string)
 	id := data.Id()
 
-	return keycloakClient.DeleteAuthenticationFlow(realmId, id)
+	err := keycloakClient.DeleteAuthenticationFlow(realmId, id)
+
+	if err != nil {
+		var ae *keycloak.ApiError
+		if !errors.As(err, &ae) {
+			return err
+		}
+
+		if ae.Code != 400 && ae.Code != 500 {
+			return err
+		}
+
+		if !strings.Contains(ae.Message, "Can't delete built in flow") &&
+			!strings.Contains(ae.Message, "unknown_error") { // unknown_error is common when the flow is still referenced by a client or realm binding
+			return err
+		}
+
+		log.Println("flow cannot be deleted, ignore error (probably built-in flow or still referenced by the realm or a client application)")
+	}
+
+	return nil
 }
 
 func resourceKeycloakAuthenticationFlowImport(d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {

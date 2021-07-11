@@ -90,7 +90,7 @@ func TestAccKeycloakApiClientRefresh(t *testing.T) {
 }
 
 func TestKeycloakApiClientRefresh(t *testing.T) {
-	t.Skip("just a play around test case - can be removed")
+	// t.Skip("just a play around test case - can be removed")
 	cookieJar, err := cookiejar.New(&cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	})
@@ -107,8 +107,8 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		Jar:       cookieJar,
 	}
 
-	username := "admin"
-	password := "admin"
+	username := "keycloak"
+	password := "password"
 	clientCredentials := &ClientCredentials{
 		ClientId:     "admin-cli",
 		ClientSecret: "",
@@ -127,14 +127,7 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		additionalHeaders: nil,
 	}
 
-	result, err := keycloakClient.GetRealm("test")
-	if err != nil {
-		t.Fatal("get realm failed")
-	}
+	sc, err := keycloakClient.GetOpenIdClientScopeByName("test", "profile")
+	log.Println(sc)
 
-	keycloakClient.UpdateRealm(result)
-
-	if result == nil {
-		t.Fatal("null result realm")
-	}
 }

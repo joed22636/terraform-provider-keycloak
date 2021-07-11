@@ -2,11 +2,12 @@ package provider
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"testing"
 )
 
 func TestAccKeycloakAuthenticationSubFlow_basic(t *testing.T) {
@@ -29,6 +30,25 @@ func TestAccKeycloakAuthenticationSubFlow_basic(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: getSubFlowImportId("keycloak_authentication_subflow.subflow"),
+			},
+		},
+	})
+}
+
+func TestAccKeycloakAuthenticationSubFlow_hardcodedSubFlowHandling(t *testing.T) {
+	t.Parallel()
+
+	parentAuthFlowAlias := "browser"
+	authFlowAlias := "forms"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakAuthenticationSubFlowDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakAuthenticationSubFlow_basic(parentAuthFlowAlias, authFlowAlias),
+				Check:  testAccCheckKeycloakAuthenticationSubFlowExists("keycloak_authentication_subflow.subflow"),
 			},
 		},
 	})

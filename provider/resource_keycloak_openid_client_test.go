@@ -35,6 +35,23 @@ func TestAccKeycloakOpenidClient_basic(t *testing.T) {
 	})
 }
 
+func TestAccKeycloakOpenidClient_hardcodedHanding(t *testing.T) {
+	t.Parallel()
+	clientId := "admin-cli"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakOpenidClientDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakOpenidClient_basic(clientId),
+				Check:  testAccCheckKeycloakOpenidClientExistsWithCorrectProtocol("keycloak_openid_client.client"),
+			},
+		},
+	})
+}
+
 func TestAccKeycloakOpenidClient_createAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var client = &keycloak.OpenidClient{}

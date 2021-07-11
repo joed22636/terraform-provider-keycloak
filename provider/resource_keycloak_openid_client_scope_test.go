@@ -34,6 +34,23 @@ func TestAccKeycloakClientScope_basic(t *testing.T) {
 	})
 }
 
+func TestAccKeycloakClientScope_hardcodedHandling(t *testing.T) {
+	t.Parallel()
+	clientScopeName := "profile"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakClientScopeDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakClientScope_basic(clientScopeName),
+				Check:  testAccCheckKeycloakClientScopeExistsWithCorrectProtocol("keycloak_openid_client_scope.client_scope"),
+			},
+		},
+	})
+}
+
 func TestAccKeycloakClientScope_createAfterManualDestroy(t *testing.T) {
 	t.Parallel()
 	var clientScope = &keycloak.OpenidClientScope{}

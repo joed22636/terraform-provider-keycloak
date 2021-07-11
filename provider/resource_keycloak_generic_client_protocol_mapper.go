@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"errors"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -116,7 +117,30 @@ func resourceKeycloakGenericClientProtocolMapperCreate(data *schema.ResourceData
 
 	err = keycloakClient.NewGenericClientProtocolMapper(genericClientProtocolMapper)
 	if err != nil {
-		return err
+		var ae *keycloak.ApiError
+		if !errors.As(err, &ae) {
+			return err
+		}
+
+		if ae.Code != 409 {
+			return err
+		}
+
+		log.Println("resource already exists, may be hardcoded, try to update")
+		r, err := keycloakClient.GetGenericClientProtocolMapperByName(
+			genericClientProtocolMapper.RealmId,
+			genericClientProtocolMapper.ClientId,
+			genericClientProtocolMapper.ClientScopeId,
+			genericClientProtocolMapper.Name)
+		if err != nil {
+			return err
+		}
+		data.SetId(r.Id)
+		genericClientProtocolMapper.Id = r.Id
+		err = resourceKeycloakGenericClientProtocolMapperUpdate(data, meta)
+		if err != nil {
+			return err
+		}
 	}
 	mapFromGenericClientProtocolMapperToData(data, genericClientProtocolMapper)
 

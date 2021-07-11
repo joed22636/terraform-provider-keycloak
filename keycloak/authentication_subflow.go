@@ -155,3 +155,26 @@ func (keycloakClient *KeycloakClient) LowerAuthenticationSubFlowPriority(realmId
 
 	return keycloakClient.LowerAuthenticationExecutionPriority(authenticationSubFlow.RealmId, executionId)
 }
+
+func (keycloakClient *KeycloakClient) GetAuthenticationSubFlowByAlias(realmId, parentFlowAlias, subFlowAlias string) (*AuthenticationSubFlow, error) {
+	var execs []AuthenticationExecution
+	err := keycloakClient.get(fmt.Sprintf("/realms/%s/authentication/flows/%s/executions", realmId, parentFlowAlias), &execs, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, exe := range execs {
+		if exe.FlowId == "" {
+			// not a subflow
+			continue
+		}
+		subFlow, err := keycloakClient.GetAuthenticationSubFlow(realmId, parentFlowAlias, exe.FlowId)
+		if err != nil {
+			return nil, err
+		}
+		if subFlow.Alias == subFlowAlias {
+			return subFlow, nil
+		}
+	}
+	return nil, nil
+}

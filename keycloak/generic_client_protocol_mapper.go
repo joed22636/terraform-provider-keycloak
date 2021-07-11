@@ -53,6 +53,35 @@ func (keycloakClient *KeycloakClient) GetGenericClientProtocolMappers(realmId st
 
 }
 
+func (keycloakClient *KeycloakClient) GetGenericClientProtocolMappersByParent(realmId, clientId, clientScopeId string) ([]GenericClientProtocolMapper, error) {
+	var genericClientProtocolMapper []GenericClientProtocolMapper
+
+	err := keycloakClient.get(protocolMapperPath(realmId, clientId, clientScopeId), &genericClientProtocolMapper, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return genericClientProtocolMapper, nil
+}
+
+func (keycloakClient *KeycloakClient) GetGenericClientProtocolMapperByName(realmId, clientId, clientScopeId, mapperName string) (*GenericClientProtocolMapper, error) {
+	mappers, err := keycloakClient.GetGenericClientProtocolMappersByParent(realmId, clientId, clientScopeId)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, mapper := range mappers {
+		if mapper.Name == mapperName {
+			mapper.RealmId = realmId
+			mapper.ClientId = clientId
+			mapper.ClientScopeId = clientScopeId
+			return &mapper, nil
+		}
+	}
+
+	return nil, fmt.Errorf("%v mapper is not found in %v scope", mapperName, clientScopeId)
+}
+
 func (keycloakClient *KeycloakClient) GetGenericClientProtocolMapper(realmId string, clientId string, clientScopeId string, mapperId string) (*GenericClientProtocolMapper, error) {
 	var genericClientProtocolMapper GenericClientProtocolMapper
 
@@ -87,16 +116,16 @@ func (mapper *GenericClientProtocolMapper) Validate(keycloakClient *KeycloakClie
 		return fmt.Errorf("validation error: only one of ClientId or ClientScopeId must be set")
 	}
 
-	protocolMappers, err := keycloakClient.listGenericProtocolMappers(mapper.RealmId, mapper.ClientId, mapper.ClientScopeId)
-	if err != nil {
-		return err
-	}
+	// protocolMappers, err := keycloakClient.listGenericProtocolMappers(mapper.RealmId, mapper.ClientId, mapper.ClientScopeId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	for _, protocolMapper := range protocolMappers {
-		if protocolMapper.Name == mapper.Name {
-			return fmt.Errorf("validation error: a protocol mapper with name %s already exists for this client", mapper.Name)
-		}
-	}
+	// for _, protocolMapper := range protocolMappers {
+	// 	if protocolMapper.Name == mapper.Name {
+	// 		return fmt.Errorf("validation error: a protocol mapper with name %s already exists for this client", mapper.Name)
+	// 	}
+	// }
 
 	return nil
 }

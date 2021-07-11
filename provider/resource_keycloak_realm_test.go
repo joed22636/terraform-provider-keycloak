@@ -590,33 +590,6 @@ func TestAccKeycloakRealm_passwordPolicy(t *testing.T) {
 	})
 }
 
-func TestAccKeycloakRealm_browserFlow(t *testing.T) {
-	realmName := acctest.RandomWithPrefix("tf-acc")
-	realmDisplayName := acctest.RandomWithPrefix("tf-acc")
-	realmDisplayNameHtml := acctest.RandomWithPrefix("tf-acc")
-	newBrowserFlow := "registration"
-
-	resource.Test(t, resource.TestCase{
-		ProviderFactories: testAccProviderFactories,
-		PreCheck:          func() { testAccPreCheck(t) },
-		CheckDestroy:      testAccCheckKeycloakRealmDestroy(),
-		Steps: []resource.TestStep{
-			{
-				Config: testKeycloakRealm_basic(realmName, realmDisplayName, realmDisplayNameHtml),
-				Check:  testAccCheckKeycloakRealmBrowserFlow("keycloak_realm.realm", "browser"),
-			},
-			{
-				Config: testKeycloakRealm_browserFlow(realmName, realmDisplayName, newBrowserFlow),
-				Check:  testAccCheckKeycloakRealmBrowserFlow("keycloak_realm.realm", newBrowserFlow),
-			},
-			{
-				Config: testKeycloakRealm_basic(realmName, realmDisplayName, realmDisplayNameHtml),
-				Check:  testAccCheckKeycloakRealmBrowserFlow("keycloak_realm.realm", "browser"),
-			},
-		},
-	})
-}
-
 func TestAccKeycloakRealm_customAttribute(t *testing.T) {
 	realmName := acctest.RandomWithPrefix("tf-acc")
 	key := acctest.RandomWithPrefix("tf-acc")
@@ -1152,21 +1125,6 @@ func testAccCheckKeycloakRealmPasswordPolicy(resourceName, passwordPolicy string
 
 		if realm.PasswordPolicy != passwordPolicy {
 			return fmt.Errorf("expected realm %s to have passwordPolicy %s, but was %s", realm.Realm, passwordPolicy, realm.PasswordPolicy)
-		}
-
-		return nil
-	}
-}
-
-func testAccCheckKeycloakRealmBrowserFlow(resourceName, browserFlow string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		realm, err := getRealmFromState(s, resourceName)
-		if err != nil {
-			return err
-		}
-
-		if realm.BrowserFlow != browserFlow {
-			return fmt.Errorf("expected realm %s to have browserFlow binding %s, but was %s", realm.Realm, browserFlow, realm.BrowserFlow)
 		}
 
 		return nil

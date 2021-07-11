@@ -23,7 +23,7 @@ func TestAccKeycloakAuthenticationBindings_basic(t *testing.T) {
 			{
 				Config: testAccKeycloakAuthenticationBindings(flowAlias),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckKeycloakAuthenticationBindings("keycloak_authentication_bindings.bindings"),
+					testAccCheckKeycloakAuthenticationBindings("keycloak_authentication_bindings.bindings", flowAlias),
 					resource.TestCheckResourceAttr("keycloak_authentication_bindings.bindings", "realm_id", testAccRealm.Realm),
 				),
 			},
@@ -64,7 +64,7 @@ func getAuthenticationBindingsImportId(resourceName string) resource.ImportState
 	}
 }
 
-func testAccCheckKeycloakAuthenticationBindings(resourceName string) resource.TestCheckFunc {
+func testAccCheckKeycloakAuthenticationBindings(resourceName, flowAlias string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
@@ -76,12 +76,12 @@ func testAccCheckKeycloakAuthenticationBindings(resourceName string) resource.Te
 			return fmt.Errorf("error fetching authentication execution config: %v", err)
 		}
 
-		if bindings.BrowserFlowAlias == "browser" {
-			return fmt.Errorf("Flows were not updated")
+		if bindings.BrowserFlowAlias != flowAlias {
+			return fmt.Errorf("Expected flow name: %v, Actual flow name: %v", flowAlias, bindings.BrowserFlowAlias)
 		}
 
-		if bindings.ClientAuthenticationFlowAlias == "clients" {
-			return fmt.Errorf("Flows were not updated")
+		if bindings.ClientAuthenticationFlowAlias != "client-"+flowAlias {
+			return fmt.Errorf("Expected flow name: %v, Actual flow name: %v", flowAlias, bindings.ClientAuthenticationFlowAlias)
 		}
 
 		return nil

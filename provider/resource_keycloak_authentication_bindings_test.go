@@ -12,7 +12,6 @@ import (
 )
 
 func TestAccKeycloakAuthenticationBindings_basic(t *testing.T) {
-	t.Parallel()
 
 	flowAlias := acctest.RandomWithPrefix("tf-acc")
 
@@ -33,7 +32,6 @@ func TestAccKeycloakAuthenticationBindings_basic(t *testing.T) {
 }
 
 func TestAccKeycloakAuthenticationBindings_import(t *testing.T) {
-	t.Parallel()
 
 	flowAlias := acctest.RandomWithPrefix("tf-acc")
 

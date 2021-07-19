@@ -88,13 +88,17 @@ func resourceKeycloakAuthenticationFlowCreate(data *schema.ResourceData, meta in
 		}
 
 		log.Println("flow already exists, may be hardcoded flow, try to update")
-		flow, err1 := keycloakClient.GetAuthenticationFlowFromAlias(authenticationFlow.RealmId, authenticationFlow.Alias)
-		if err1 != nil {
-			return err1
+		flow, err := keycloakClient.GetAuthenticationFlowFromAlias(authenticationFlow.RealmId, authenticationFlow.Alias)
+		if err != nil {
+			return err
 		}
 		data.SetId(flow.Id)
 		authenticationFlow.Id = flow.Id
 		err = resourceKeycloakAuthenticationFlowUpdate(data, meta)
+		if err != nil {
+			return err
+		}
+		err = keycloakClient.DeleteBuiltInFlowExecutors(authenticationFlow)
 		if err != nil {
 			return err
 		}

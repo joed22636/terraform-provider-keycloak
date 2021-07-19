@@ -105,10 +105,13 @@ func resourceKeycloakAuthenticationSubFlowCreate(data *schema.ResourceData, meta
 			return err
 		}
 
-		log.Println("flow already exists, may be hardcoded flow, try to update")
-		flow, err1 := keycloakClient.GetAuthenticationSubFlowByAlias(authenticationFlow.RealmId, authenticationFlow.ParentFlowAlias, authenticationFlow.Alias)
-		if err1 != nil {
-			return err1
+		log.Println("subflow already exists, may be hardcoded flow, try to update")
+		flow, err := keycloakClient.GetAuthenticationSubFlowByAlias(authenticationFlow.RealmId, authenticationFlow.ParentFlowAlias, authenticationFlow.Alias)
+		if err != nil {
+			return err
+		}
+		if flow == nil {
+			return fmt.Errorf("'%v' cannot be used as subflow alias. Please choose another one", authenticationFlow.Alias)
 		}
 		data.SetId(flow.Id)
 		authenticationFlow.Id = flow.Id

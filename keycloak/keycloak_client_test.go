@@ -127,7 +127,10 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		additionalHeaders: nil,
 	}
 
-	sc, err := keycloakClient.GetOpenIdClientScopeByName("test", "profile")
-	log.Println(sc)
-
+	f, e := keycloakClient.GetAuthenticationFlowFromAlias("test", "browser")
+	if e != nil {
+		log.Println(e)
+	}
+	e = keycloakClient.DeleteBuiltInFlowExecutors(f) // -- f already given
+	log.Println(e)
 }

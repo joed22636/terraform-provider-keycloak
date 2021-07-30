@@ -11,5 +11,5 @@ func logComplexType(data interface{}) {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	log.Println("LZA - " + string(b))
+	log.Println("JOED - " + string(b))
 }

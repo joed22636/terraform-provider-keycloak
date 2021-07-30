@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -527,7 +526,6 @@ func resourceKeycloakLdapUserFederationRead(data *schema.ResourceData, meta inte
 }
 
 func resourceKeycloakLdapUserFederationUpdate(data *schema.ResourceData, meta interface{}) error {
-	log.Println("LZA ----------------------------")
 	keycloakClient := meta.(*keycloak.KeycloakClient)
 
 	ldap := getLdapUserFederationFromData(data)

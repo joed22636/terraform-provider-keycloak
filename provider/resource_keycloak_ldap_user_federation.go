@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -175,6 +176,15 @@ func resourceKeycloakLdapUserFederation() *schema.Resource {
 				Description: "When true, Keycloak assumes the LDAP server supports pagination.",
 			},
 
+			"connection_pooling":                {Type: schema.TypeBool, Required: true},
+			"connection_pooling_authentication": {Type: schema.TypeString, Optional: true},
+			"connection_pool_debug_level":       {Type: schema.TypeString, Optional: true},
+			"connection_pool_initial_size":      {Type: schema.TypeInt, Optional: true},
+			"connection_pool_maximum_size":      {Type: schema.TypeInt, Optional: true},
+			"connection_pool_preferred_size":    {Type: schema.TypeInt, Optional: true},
+			"connection_pool_protocol":          {Type: schema.TypeString, Optional: true},
+			"connection_pool_timeout":           {Type: schema.TypeInt, Optional: true},
+
 			"batch_size_for_sync": {
 				Type:        schema.TypeInt,
 				Optional:    true,
@@ -325,9 +335,40 @@ func getLdapUserFederationFromData(data *schema.ResourceData) *keycloak.LdapUser
 		ReadTimeout:            data.Get("read_timeout").(string),
 		Pagination:             data.Get("pagination").(bool),
 
+		ConnectionPooling: data.Get("connection_pooling").(bool),
+
 		BatchSizeForSync:  data.Get("batch_size_for_sync").(int),
 		FullSyncPeriod:    data.Get("full_sync_period").(int),
 		ChangedSyncPeriod: data.Get("changed_sync_period").(int),
+	}
+
+	if d, ok := data.GetOk("connection_pooling_authentication"); ok {
+		v := d.(string)
+		ldapUserFederation.ConnectionPoolingAuthentication = &v
+	}
+	if d, ok := data.GetOk("connection_pool_debug_level"); ok {
+		v := d.(string)
+		ldapUserFederation.ConnectionPoolDebugLevel = &v
+	}
+	if d, ok := data.GetOk("connection_pool_initial_size"); ok {
+		v := d.(int)
+		ldapUserFederation.ConnectionPoolInitialSize = &v
+	}
+	if d, ok := data.GetOk("connection_pool_maximum_size"); ok {
+		v := d.(int)
+		ldapUserFederation.ConnectionPoolMaximumSize = &v
+	}
+	if d, ok := data.GetOk("connection_pool_preferred_size"); ok {
+		v := d.(int)
+		ldapUserFederation.ConnectionPoolPreferredSize = &v
+	}
+	if d, ok := data.GetOk("connection_pool_protocol"); ok {
+		v := d.(string)
+		ldapUserFederation.ConnectionPoolProtocol = &v
+	}
+	if d, ok := data.GetOk("connection_pool_timeout"); ok {
+		v := d.(int)
+		ldapUserFederation.ConnectionPoolTimeout = &v
 	}
 
 	if cache, ok := data.GetOk("cache"); ok {
@@ -394,6 +435,15 @@ func setLdapUserFederationData(data *schema.ResourceData, ldap *keycloak.LdapUse
 	data.Set("read_timeout", ldap.ReadTimeout)
 	data.Set("pagination", ldap.Pagination)
 
+	data.Set("connection_pooling", ldap.ConnectionPooling)
+	data.Set("connection_pooling_authentication", ldap.ConnectionPoolingAuthentication)
+	data.Set("connection_pool_debug_level", ldap.ConnectionPoolDebugLevel)
+	data.Set("connection_pool_initial_size", ldap.ConnectionPoolInitialSize)
+	data.Set("connection_pool_maximum_size", ldap.ConnectionPoolMaximumSize)
+	data.Set("connection_pool_preferred_size", ldap.ConnectionPoolPreferredSize)
+	data.Set("connection_pool_protocol", ldap.ConnectionPoolProtocol)
+	data.Set("connection_pool_timeout", ldap.ConnectionPoolTimeout)
+
 	if ldap.AllowKerberosAuthentication {
 		kerberosSettings := make(map[string]interface{})
 
@@ -449,6 +499,11 @@ func resourceKeycloakLdapUserFederationCreate(data *schema.ResourceData, meta in
 		return err
 	}
 
+	err = keycloakClient.DeleteLdapUserFederationMappers(ldap.RealmId, ldap.Id)
+	if err != nil {
+		return err
+	}
+
 	setLdapUserFederationData(data, ldap)
 
 	return resourceKeycloakLdapUserFederationRead(data, meta)
@@ -472,6 +527,7 @@ func resourceKeycloakLdapUserFederationRead(data *schema.ResourceData, meta inte
 }
 
 func resourceKeycloakLdapUserFederationUpdate(data *schema.ResourceData, meta interface{}) error {
+	log.Println("LZA ----------------------------")
 	keycloakClient := meta.(*keycloak.KeycloakClient)
 
 	ldap := getLdapUserFederationFromData(data)

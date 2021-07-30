@@ -12,6 +12,33 @@ import (
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
+func TestAccKeycloakLdapUserFederation_connectionPooling(t *testing.T) {
+	t.Parallel()
+	ldapName := acctest.RandomWithPrefix("tf-acc")
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakLdapUserFederationDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakLdapUserFederation_connectionPooling(ldapName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pooling", "true"),
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pooling", "true"),
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pooling_authentication", "simple"),
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pool_debug_level", "fine"),
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pool_initial_size", "10"),
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pool_maximum_size", "20"),
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pool_preferred_size", "15"),
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pool_protocol", "ssl"),
+					resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "connection_pool_timeout", "5"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccKeycloakLdapUserFederation_basic(t *testing.T) {
 	t.Parallel()
 	ldapName := acctest.RandomWithPrefix("tf-acc")
@@ -615,6 +642,44 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling		= false
+}
+	`, testAccRealmUserFederation.Realm, ldap)
+}
+
+func testKeycloakLdapUserFederation_connectionPooling(ldap string) string {
+	return fmt.Sprintf(`
+data "keycloak_realm" "realm" {
+	realm = "%s"
+}
+
+resource "keycloak_ldap_user_federation" "openldap" {
+	name                    = "%s"
+	realm_id                = data.keycloak_realm.realm.id
+
+	enabled                 = true
+
+	username_ldap_attribute = "cn"
+	rdn_ldap_attribute      = "cn"
+	uuid_ldap_attribute     = "entryDN"
+	user_object_classes     = [
+		"simpleSecurityObject",
+		"organizationalRole"
+	]
+	connection_url          = "ldap://openldap"
+	users_dn                = "dc=example,dc=org"
+	bind_dn                 = "cn=admin,dc=example,dc=org"
+	bind_credential         = "admin"
+
+	connection_pooling					= true
+	connection_pooling_authentication   = "simple"	
+	connection_pool_debug_level			= "fine"
+	connection_pool_initial_size		= "10"
+	connection_pool_maximum_size		= "20"
+	connection_pool_preferred_size		= "15"
+	connection_pool_protocol			= "ssl"
+	connection_pool_timeout				= "5"
+
 }
 	`, testAccRealmUserFederation.Realm, ldap)
 }
@@ -666,6 +731,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 		eviction_hour        = %d
 		eviction_minute      = %d
 	}
+	connection_pooling		= false
 }
 	`, testAccRealmUserFederation.Realm, ldap.Name, ldap.Enabled, ldap.UsernameLDAPAttribute, ldap.RdnLDAPAttribute, ldap.UuidLDAPAttribute, arrayOfStringsForTerraformResource(ldap.UserObjectClasses), ldap.ConnectionUrl, ldap.UsersDn, ldap.BindDn, ldap.BindCredential, ldap.SearchScope, ldap.ValidatePasswordPolicy, ldap.TrustEmail, ldap.UseTruststoreSpi, ldap.ConnectionTimeout, ldap.ReadTimeout, ldap.Pagination, ldap.BatchSizeForSync, ldap.FullSyncPeriod, ldap.ChangedSyncPeriod, ldap.ServerPrincipal, ldap.UseKerberosForPasswordAuthentication, ldap.KeyTab, ldap.KerberosRealm, ldap.CachePolicy, ldap.MaxLifespan, *ldap.EvictionDay, *ldap.EvictionHour, *ldap.EvictionMinute)
 }
@@ -695,6 +761,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling		= false
 }
 	`, testAccRealmUserFederation.Realm, ldap, attr, val)
 }
@@ -722,6 +789,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	]
 	connection_url          = "ldap://openldap"
 	users_dn                = "dc=example,dc=org"
+	connection_pooling		= false
 }
 	`, testAccRealmUserFederation.Realm, ldap)
 }
@@ -749,6 +817,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	]
 	connection_url          = "ldap://openldap"
 	users_dn                = "dc=example,dc=org"
+	connection_pooling		= false
 }
 	`, testAccRealmUserFederation.Realm, ldap)
 }
@@ -779,6 +848,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 
 	full_sync_period        = %d
 	changed_sync_period     = %d
+	connection_pooling		= false
 }
 	`, testAccRealmUserFederation.Realm, ldap, fullSyncPeriod, changedSyncPeriod)
 }
@@ -809,6 +879,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 
 	connection_timeout      = "10s"
 	read_timeout            = "5s"
+	connection_pooling		= false
 }
 	`, testAccRealmUserFederation.Realm, ldap)
 }
@@ -836,6 +907,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "%s"
+	connection_pooling		= false
 }
 	`, testAccRealmUserFederation.Realm, ldap, bindCredential)
 }
@@ -861,6 +933,7 @@ resource "keycloak_ldap_user_federation" "openldap_no_auth" {
 	]
 	connection_url          = "ldap://openldap"
 	users_dn                = "dc=example,dc=org"
+	connection_pooling		= false
 }
 	`, testAccRealmUserFederation.Realm, ldap)
 }

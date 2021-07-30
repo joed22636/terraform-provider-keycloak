@@ -127,10 +127,8 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		additionalHeaders: nil,
 	}
 
-	f, e := keycloakClient.GetAuthenticationFlowFromAlias("test", "browser")
-	if e != nil {
-		log.Println(e)
-	}
-	e = keycloakClient.DeleteBuiltInFlowExecutors(f) // -- f already given
+	ldapId := "74f85131-fd7f-4f94-851b-0e849f2508e5"
+	e := keycloakClient.DeleteLdapUserFederationMappers("test", ldapId)
+
 	log.Println(e)
 }

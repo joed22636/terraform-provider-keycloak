@@ -88,9 +88,9 @@ func (keycloakClient *KeycloakClient) ValidateOpenidClient(client *OpenidClient)
 		return fmt.Errorf("validation error: Keycloak cannot issue tokens for bearer-only clients; no oauth2 flows can be enabled for this client")
 	}
 
-	if (client.StandardFlowEnabled || client.ImplicitFlowEnabled) && len(client.ValidRedirectUris) == 0 {
-		return fmt.Errorf("validation error: standard (authorization code) and implicit flows require at least one valid redirect uri")
-	}
+	// if (client.StandardFlowEnabled || client.ImplicitFlowEnabled) && len(client.ValidRedirectUris) == 0 {
+	// 	return fmt.Errorf("validation error: standard (authorization code) and implicit flows require at least one valid redirect uri")
+	// }
 
 	if client.ServiceAccountsEnabled && client.PublicClient {
 		return fmt.Errorf("validation error: service accounts (client credentials flow) cannot be enabled on public clients")

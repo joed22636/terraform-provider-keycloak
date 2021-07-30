@@ -134,7 +134,32 @@ go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./p
 
 # TODO
 
-* executors are duplicated 
+* credential handling 
+  * smtp
+  * ldap
+  * idp 
+*  webUI > roles > default roles
+* [not yet needed] - webUI > realm > keys  -- key providers
+* [not yet needed] - webUI > client scope > <select one> > scope > realm/client role mappings are not managable afais
+* [not yet needed] - idp > some items (allowedClockSkew,forwardParameters,prompt selection)
+* [not yet needed] - webUI > realm > token > some settings (ssoSessionIdleTimeoutRememberMe, ssoSessionMaxLifespanRememberMe)
+* [not yet needed] - webUI > cilents > select one > Permissions
+* [not yet needed] - webUI > cilents > Fine Grain OpenID Connect Configuration 
+* [not yet needed] - webUI > cilents > OAuth 2.0 Mutual TLS Certificate Bound Access Tokens Enabled 
+* [not yet needed] - webUI > cilents > consent related settings
+* [not yet needed] - webUI > cilents > authorization enabled and related settings
+* [not yet needed] - webUI > user federation > some settings (enabled tls, debug, Enable the LDAPv3 Password Modify Extended Operation)
 * built in flow property is not kept
 
 # Branch notes
+
+use keycloak/keycloak_client_test.go to debug http rest apis
+
+# Extend - classes - architecture
+
+see bindings resource, connection pooling
+
+## HTTP API - json model
+ JSON conversion and API CRUD methods
+
+## Terraform model 

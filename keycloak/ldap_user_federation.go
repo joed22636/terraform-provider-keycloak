@@ -37,6 +37,15 @@ type LdapUserFederation struct {
 	ReadTimeout            string // duration string (ex: 1h30m)
 	Pagination             bool
 
+	ConnectionPooling               bool
+	ConnectionPoolingAuthentication *string // "none", "simple"
+	ConnectionPoolDebugLevel        *string // "fine", "all"
+	ConnectionPoolInitialSize       *int
+	ConnectionPoolMaximumSize       *int
+	ConnectionPoolPreferredSize     *int
+	ConnectionPoolProtocol          *string // "plain", "ssl"
+	ConnectionPoolTimeout           *int
+
 	ServerPrincipal                      string
 	UseKerberosForPasswordAuthentication bool
 	AllowKerberosAuthentication          bool
@@ -106,6 +115,9 @@ func convertFromLdapUserFederationToComponent(ldap *LdapUserFederation) (*compon
 		},
 		"pagination": {
 			strconv.FormatBool(ldap.Pagination),
+		},
+		"connectionPooling": {
+			strconv.FormatBool(ldap.ConnectionPooling),
 		},
 		"batchSizeForSync": {
 			strconv.Itoa(ldap.BatchSizeForSync),
@@ -206,6 +218,28 @@ func convertFromLdapUserFederationToComponent(ldap *LdapUserFederation) (*compon
 		}
 	}
 
+	if ldap.ConnectionPoolingAuthentication != nil {
+		componentConfig["connectionPoolingAuthentication"] = []string{*ldap.ConnectionPoolingAuthentication}
+	}
+	if ldap.ConnectionPoolDebugLevel != nil {
+		componentConfig["connectionPoolingDebug"] = []string{*ldap.ConnectionPoolDebugLevel}
+	}
+	if ldap.ConnectionPoolProtocol != nil {
+		componentConfig["connectionPoolingProtocol"] = []string{*ldap.ConnectionPoolProtocol}
+	}
+	if ldap.ConnectionPoolInitialSize != nil {
+		componentConfig["connectionPoolingInitSize"] = []string{strconv.Itoa(*ldap.ConnectionPoolInitialSize)}
+	}
+	if ldap.ConnectionPoolMaximumSize != nil {
+		componentConfig["connectionPoolingMaxSize"] = []string{strconv.Itoa(*ldap.ConnectionPoolMaximumSize)}
+	}
+	if ldap.ConnectionPoolPreferredSize != nil {
+		componentConfig["connectionPoolingPrefSize"] = []string{strconv.Itoa(*ldap.ConnectionPoolPreferredSize)}
+	}
+	if ldap.ConnectionPoolTimeout != nil {
+		componentConfig["connectionPoolingTimeout"] = []string{strconv.Itoa(*ldap.ConnectionPoolTimeout)}
+	}
+
 	return &component{
 		Id:           ldap.Id,
 		Name:         ldap.Name,
@@ -250,6 +284,11 @@ func convertFromComponentToLdapUserFederation(component *component) (*LdapUserFe
 	}
 
 	pagination, err := parseBoolAndTreatEmptyStringAsFalse(component.getConfig("pagination"))
+	if err != nil {
+		return nil, err
+	}
+
+	connectionPooling, err := parseBoolAndTreatEmptyStringAsFalse(component.getConfig("connectionPooling"))
 	if err != nil {
 		return nil, err
 	}
@@ -308,6 +347,8 @@ func convertFromComponentToLdapUserFederation(component *component) (*LdapUserFe
 		UseTruststoreSpi:       component.getConfig("useTruststoreSpi"),
 		Pagination:             pagination,
 
+		ConnectionPooling: connectionPooling,
+
 		ServerPrincipal:                      component.getConfig("serverPrincipal"),
 		UseKerberosForPasswordAuthentication: useKerberosForPasswordAuthentication,
 		AllowKerberosAuthentication:          allowKerberosAuthentication,
@@ -319,6 +360,44 @@ func convertFromComponentToLdapUserFederation(component *component) (*LdapUserFe
 		ChangedSyncPeriod: changedSyncPeriod,
 
 		CachePolicy: component.getConfig("cachePolicy"),
+	}
+
+	if d, ok := component.getConfigOk("connectionPoolingAuthentication"); ok {
+		ldap.ConnectionPoolingAuthentication = &d
+	}
+	if d, ok := component.getConfigOk("connectionPoolingDebug"); ok {
+		ldap.ConnectionPoolDebugLevel = &d
+	}
+	if d, ok := component.getConfigOk("connectionPoolingInitSize"); ok {
+		i, err := strconv.Atoi(d)
+		if err != nil {
+			return nil, err
+		}
+		ldap.ConnectionPoolInitialSize = &i
+	}
+	if d, ok := component.getConfigOk("connectionPoolingMaxSize"); ok {
+		i, err := strconv.Atoi(d)
+		if err != nil {
+			return nil, err
+		}
+		ldap.ConnectionPoolMaximumSize = &i
+	}
+	if d, ok := component.getConfigOk("connectionPoolingPrefSize"); ok {
+		i, err := strconv.Atoi(d)
+		if err != nil {
+			return nil, err
+		}
+		ldap.ConnectionPoolPreferredSize = &i
+	}
+	if d, ok := component.getConfigOk("connectionPoolingProtocol"); ok {
+		ldap.ConnectionPoolProtocol = &d
+	}
+	if d, ok := component.getConfigOk("connectionPoolingTimeout"); ok {
+		i, err := strconv.Atoi(d)
+		if err != nil {
+			return nil, err
+		}
+		ldap.ConnectionPoolTimeout = &i
 	}
 
 	if bindDn := component.getConfig("bindDn"); bindDn != "" {
@@ -500,6 +579,37 @@ func (keycloakClient *KeycloakClient) GetLdapUserFederationMappers(realmId, id s
 	}
 
 	return &ldapUserFederationMappers, nil
+}
+
+func (keycloakClient *KeycloakClient) DeleteComponent(realmId, id string) error {
+	return keycloakClient.delete(fmt.Sprintf("/realms/%s/components/%s", realmId, id), nil)
+}
+
+func (keycloakClient *KeycloakClient) DeleteLdapUserFederationMappers(realmId, ldapUserFederationId string) error {
+	var components []*component
+
+	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components?parent=%s&type=org.keycloak.storage.ldap.mappers.LDAPStorageMapper", realmId, ldapUserFederationId), &components, nil)
+	if err != nil {
+		return err
+	}
+	for _, component := range components {
+		switch component.ProviderId {
+		case "full-name-ldap-mapper",
+			"group-ldap-mapper",
+			"hardcoded-ldap-group-mapper",
+			"hardcoded-ldap-role-mapper",
+			"msad-lds-user-account-control-mapper",
+			"msad-user-account-control-mapper",
+			"user-attribute-ldap-mapper",
+			"role-ldap-mapper":
+			err := keycloakClient.DeleteComponent(realmId, component.Id)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 func (keycloakClient *KeycloakClient) UpdateLdapUserFederation(ldapUserFederation *LdapUserFederation) error {

@@ -4,7 +4,7 @@ KEYCLOAK_CLIENT_TIMEOUT=5 \
 KEYCLOAK_REALM=master \
 KEYCLOAK_URL="http://localhost:8080" \
 make testacc
-?   	github.com/mrparkers/terraform-provider-keycloak	[no test files]
+?   	github.com/joed22636/terraform-provider-keycloak	[no test files]
 === RUN   TestAccKeycloakApiClientRefresh
     keycloak_client_test.go:65: 
 --- SKIP: TestAccKeycloakApiClientRefresh (0.95s)
@@ -13,7 +13,7 @@ make testacc
 === RUN   TestLocationHeaderParseForComponent
 --- PASS: TestLocationHeaderParseForComponent (0.00s)
 PASS
-ok  	github.com/mrparkers/terraform-provider-keycloak/keycloak	(cached)
+ok  	github.com/joed22636/terraform-provider-keycloak/keycloak	(cached)
 2021/06/14 23:08:45 [DEBUG] Login request: client_id=terraform&client_secret=884e0f95-0f42-4a63-9b1f-94274655669e&grant_type=client_credentials
 2021/06/14 23:08:45 [DEBUG] Login response: {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhdnd1YkdGa3hndmluX0ZyWGZ3UGkyMzJOei1UclJZZFg2SGxXaTVqcXp3In0.eyJleHAiOjE2MjM3OTEzMjUsImlhdCI6MTYyMzcwNDkyNSwianRpIjoiNTdlMGE2YzUtOTk4MS00OTM3LWJmZjItOGZiNmFmMDc4ZDNiIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2F1dGgvcmVhbG1zL21hc3RlciIsImF1ZCI6WyJtYXN0ZXItcmVhbG0iLCJhY2NvdW50Il0sInN1YiI6Ijc0YWIyMDczLTY0YmMtNDU0Ny05Y2EwLWYwYmU4OWFmZDFjYiIsInR5cCI6IkJlYXJlciIsImF6cCI6InRlcnJhZm9ybSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiY3JlYXRlLXJlYWxtIiwib2ZmbGluZV9hY2Nlc3MiLCJhZG1pbiIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsibWFzdGVyLXJlYWxtIjp7InJvbGVzIjpbInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwidmlldy1yZWFsbSIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwiY3JlYXRlLWNsaWVudCIsIm1hbmFnZS11c2VycyIsInF1ZXJ5LXJlYWxtcyIsInZpZXctYXV0aG9yaXphdGlvbiIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS11c2VycyIsIm1hbmFnZS1ldmVudHMiLCJtYW5hZ2UtcmVhbG0iLCJ2aWV3LWV2ZW50cyIsInZpZXctdXNlcnMiLCJ2aWV3LWNsaWVudHMiLCJtYW5hZ2UtYXV0aG9yaXphdGlvbiIsIm1hbmFnZS1jbGllbnRzIiwicXVlcnktZ3JvdXBzIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNsaWVudElkIjoidGVycmFmb3JtIiwiY2xpZW50SG9zdCI6IjE3Mi4yMS4wLjEiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZXJ2aWNlLWFjY291bnQtdGVycmFmb3JtIiwiY2xpZW50QWRkcmVzcyI6IjE3Mi4yMS4wLjEifQ.HDs7r__rJ1GCpip8V7wGE1UJOikdEC0UTUL0kmHm67SSq7-him3F23dSSMqmaSSbaxPYA2ZkwYzDdMB4BRQ7n5IY4z_5ze1vAPmyP4QEDV3pEpWCwjLufzKmFUvyf-S3ADyH1eHrC34vTRsky4zNg1dilqTiOzG7Ryh134_9DNbYfQ6nDrrqE_9fob0KzsTwccGmwXRiA2tNOdArAxZIOuuI0wYjde43mXYZGQVHGmoNyFZEcaBMzkYJaSrGHB2IpIys9917LXOJbXfScA-nshNh5kKmtMXVsBo8C6AjpOdanN2uh50cN4hFxDwAnlYkqkCDh_8TytPjyPmAgjMetA","expires_in":86400,"refresh_expires_in":0,"token_type":"Bearer","not-before-policy":0,"scope":"profile email"}
 2021/06/14 23:08:45 [DEBUG] Sending GET to /auth/admin/serverinfo
@@ -2509,7 +2509,7 @@ Error: expected saml_attribute_name_format to be one of [Basic URI Reference Uns
 --- PASS: TestAccKeycloakGenericRoleMapperClientScope_createAfterManualDestroy (10.95s)
 --- PASS: TestAccKeycloakGroupMemberships_moreThan100members (28.81s)
 FAIL
-FAIL	github.com/mrparkers/terraform-provider-keycloak/provider	711.450s
+FAIL	github.com/joed22636/terraform-provider-keycloak/provider	711.450s
 FAIL
 make: *** [testacc] Error 1
 hugo@hugos-mbp terraform-provider-keycloak-fork % 

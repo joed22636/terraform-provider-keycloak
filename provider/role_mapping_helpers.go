@@ -1,6 +1,6 @@
 package provider
 
-import "github.com/mrparkers/terraform-provider-keycloak/keycloak"
+import "github.com/joed22636/terraform-provider-keycloak/keycloak"
 
 // a struct that represents the "desired" state configured via terraform
 // the key for 'clientRoles' is keycloak's client-id (the uuid, not to be confused with the OAuth Client Id)

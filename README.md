@@ -1,13 +1,13 @@
 # terraform-provider-keycloak
 Terraform provider for [Keycloak](https://www.keycloak.org/).
 
-[![CircleCI](https://circleci.com/gh/mrparkers/terraform-provider-keycloak.svg?style=shield)](https://circleci.com/gh/mrparkers/terraform-provider-keycloak)
+<!-- [![CircleCI](https://circleci.com/gh/joed22636/terraform-provider-keycloak.svg?style=shield)](https://circleci.com/gh/joed22636/terraform-provider-keycloak) -->
 
 ## Docs
 
-All documentation for this provider can now be found on the Terraform Registry: https://registry.terraform.io/providers/mrparkers/keycloak/latest/docs
+All documentation for this provider can now be found on the Terraform Registry: https://registry.terraform.io/providers/joed22636/keycloak/latest/docs
 
-The old documentation can still be found at https://mrparkers.github.io/terraform-provider-keycloak, but these docs will no
+The old documentation can still be found at https://joed22636.github.io/terraform-provider-keycloak, but these docs will no
 longer be kept up to date.
 
 ## Installation
@@ -18,7 +18,7 @@ v2.0.0 and above can be installed automatically using Terraform 0.13 by using th
 terraform {
   required_providers {
     keycloak = {
-      source = "mrparkers/keycloak"
+      source = "joed22636/keycloak"
       version = ">= 2.0.0"
     }
   }
@@ -36,7 +36,7 @@ If you are using any version below v2.0.0, you can also follow the [old instruct
 Please read https://www.terraform.io/upgrade-guides/0-13.html first. For a keycloak project follow the following steps in order:
 
 1. `terraform -v` should print 0.13 and list no keycloak provider
-1. `terraform state replace-provider registry.terraform.io/-/keycloak mrparkers/keycloak`
+1. `terraform state replace-provider registry.terraform.io/-/keycloak joed22636/keycloak`
 1. find all `provider keycloak {...}` blocks in `*.tf` (also in all modules you are including) and delete the `version` line
 1. add the `terraform { required_provides { keycloak = { ...` block mentioned in "Installation" to `terraform.tf` (also in all module directories you are including). Be sure to also always add "source" or else the Terraform looks for "hashicorp/keycloak"!   
 1. `terraform 0.13upgrade`
@@ -55,14 +55,14 @@ The following versions are used when running acceptance tests in CI:
 ## Releases
 
 This provider uses [GoReleaser](https://goreleaser.com/) to build and publish releases. Each release published to GitHub
-contains binary files for Linux, macOS (darwin), and Windows, as configured within the [`.goreleaser.yml`](https://github.com/mrparkers/terraform-provider-keycloak/blob/master/.goreleaser.yml)
+contains binary files for Linux, macOS (darwin), and Windows, as configured within the [`.goreleaser.yml`](https://github.com/joed22636/terraform-provider-keycloak/blob/master/.goreleaser.yml)
 file.
 
 Each release also contains a `terraform-provider-keycloak_${RELEASE_VERSION}_SHA256SUMS` file, accompanied by a signature
-created by a PGP key with the fingerprint `C508 6791 5E11 6CD2`. This key can be found on my Keybase account at https://keybase.io/mrparkers.
+created by a PGP key with the fingerprint `C508 6791 5E11 6CD2`. This key can be found on my Keybase account at https://keybase.io/joed22636.
 
-You can find the list of releases [here](https://github.com/mrparkers/terraform-provider-keycloak/releases).
-You can find the changelog for each version [here](https://github.com/mrparkers/terraform-provider-keycloak/blob/master/CHANGELOG.md).
+You can find the list of releases [here](https://github.com/joed22636/terraform-provider-keycloak/releases).
+You can find the changelog for each version [here](https://github.com/joed22636/terraform-provider-keycloak/blob/master/CHANGELOG.md).
 
 Note: Prior to 2.0.0, a statically linked build for use within Alpine linux was included with each release. This is no longer
 done due to [GoReleaser not supporting CGO](https://goreleaser.com/limitations/cgo/). Instead of using a statically linked,
@@ -129,7 +129,7 @@ go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./p
 
 ## License
 
-[MIT](https://github.com/mrparkers/terraform-provider-keycloak/blob/master/LICENSE)
+[MIT](https://github.com/joed22636/terraform-provider-keycloak/blob/master/LICENSE)
 
 
 # TODO
@@ -149,6 +149,7 @@ go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./p
 * [not yet needed] - webUI > cilents > consent related settings
 * [not yet needed] - webUI > cilents > authorization enabled and related settings
 * [not yet needed] - webUI > user federation > some settings (enabled tls, debug, Enable the LDAPv3 Password Modify Extended Operation)
+* cicleci reference in readme - badge - CI build
 * built in flow property is not kept
 
 # Branch notes

@@ -5,18 +5,18 @@ MAKEFLAGS += --silent
 
 build:
 	go build -o terraform-provider-keycloak
-	mkdir -p providers/registry.terraform.io/mrparkers/keycloak/99.0.0/darwin_amd64
-	cp terraform-provider-keycloak providers/registry.terraform.io/mrparkers/keycloak/99.0.0/darwin_amd64/terraform-provider-keycloak_v99.0.0
+	mkdir -p providers/registry.terraform.io/joed22636/keycloak/1.0.3/darwin_amd64
+	cp terraform-provider-keycloak providers/registry.terraform.io/joed22636/keycloak/1.0.3/darwin_amd64/terraform-provider-keycloak_v1.0.3
 
 build-example: build
-	mkdir -p example/.terraform/plugins/terraform.local/mrparkers/keycloak/3.0.0/darwin_amd64
-	mkdir -p example/terraform.d/plugins/terraform.local/mrparkers/keycloak/3.0.0/darwin_amd64
-	cp terraform-provider-keycloak example/.terraform/plugins/terraform.local/mrparkers/keycloak/3.0.0/darwin_amd64/
-	cp terraform-provider-keycloak example/terraform.d/plugins/terraform.local/mrparkers/keycloak/3.0.0/darwin_amd64/
+	mkdir -p example/.terraform/plugins/terraform.local/joed22636/keycloak/3.0.0/darwin_amd64
+	mkdir -p example/terraform.d/plugins/terraform.local/joed22636/keycloak/3.0.0/darwin_amd64
+	cp terraform-provider-keycloak example/.terraform/plugins/terraform.local/joed22636/keycloak/3.0.0/darwin_amd64/
+	cp terraform-provider-keycloak example/terraform.d/plugins/terraform.local/joed22636/keycloak/3.0.0/darwin_amd64/
 
 build-win: build
-	-mkdir providers\registry.terraform.io\mrparkers\keycloak\99.0.0\windows_amd64
-	copy terraform-provider-keycloak providers\registry.terraform.io\mrparkers\keycloak\99.0.0\windows_amd64\terraform-provider-keycloak_v99.0.0.exe
+	-mkdir providers\registry.terraform.io\joed22636\keycloak\1.0.3\windows_amd64
+	copy terraform-provider-keycloak providers\registry.terraform.io\joed22636\keycloak\1.0.3\windows_amd64\terraform-provider-keycloak_v1.0.3.exe
 	
 local: deps
 	docker-compose up --build -d

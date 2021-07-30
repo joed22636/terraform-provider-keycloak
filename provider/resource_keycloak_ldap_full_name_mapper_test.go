@@ -2,12 +2,13 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"regexp"
-	"testing"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func TestAccKeycloakLdapFullNameMapper_basic(t *testing.T) {
@@ -231,6 +232,8 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
+	
 }
 
 resource "keycloak_ldap_full_name_mapper" "full_name_mapper" {
@@ -266,6 +269,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
 }
 
 resource "keycloak_ldap_full_name_mapper" "full_name_mapper" {
@@ -307,6 +311,7 @@ resource "keycloak_ldap_user_federation" "openldap_one" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
 }
 
 resource "keycloak_ldap_user_federation" "openldap_two" {
@@ -326,6 +331,7 @@ resource "keycloak_ldap_user_federation" "openldap_two" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
 }
 
 resource "keycloak_ldap_full_name_mapper" "full_name_mapper" {
@@ -365,6 +371,7 @@ resource "keycloak_ldap_user_federation" "openldap_one" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
 }
 
 resource "keycloak_ldap_user_federation" "openldap_two" {
@@ -384,6 +391,7 @@ resource "keycloak_ldap_user_federation" "openldap_two" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
 }
 
 resource "keycloak_ldap_full_name_mapper" "full_name_mapper" {
@@ -420,6 +428,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
 }
 
 resource "keycloak_ldap_full_name_mapper" "full_name_mapper" {
@@ -457,6 +466,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
 }
 
 resource "keycloak_ldap_full_name_mapper" "full_name_mapper" {

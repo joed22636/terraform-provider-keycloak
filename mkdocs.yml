@@ -1,6 +1,6 @@
 site_name: "Terraform Provider: Keycloak"
-site_url: https://mrparkers.github.io/terraform-provider-keycloak/
-repo_url: https://github.com/mrparkers/terraform-provider-keycloak
+site_url: https://joed22636.github.io/terraform-provider-keycloak/
+repo_url: https://github.com/joed22636/terraform-provider-keycloak
 nav:
 - Getting Started: index.md
 - Data Sources:

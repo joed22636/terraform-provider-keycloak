@@ -2,7 +2,7 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func dataSourceKeycloakRealm() *schema.Resource {
@@ -393,37 +393,6 @@ func dataSourceKeycloakRealm() *schema.Resource {
 				Computed:    true,
 			},
 
-			//flow bindings
-			"browser_flow": {
-				Type:        schema.TypeString,
-				Description: "Which flow should be used for BrowserFlow",
-				Computed:    true,
-			},
-			"registration_flow": {
-				Type:        schema.TypeString,
-				Description: "Which flow should be used for RegistrationFlow",
-				Computed:    true,
-			},
-			"direct_grant_flow": {
-				Type:        schema.TypeString,
-				Description: "Which flow should be used for DirectGrantFlow",
-				Computed:    true,
-			},
-			"reset_credentials_flow": {
-				Type:        schema.TypeString,
-				Description: "Which flow should be used for ResetCredentialsFlow",
-				Computed:    true,
-			},
-			"client_authentication_flow": {
-				Type:        schema.TypeString,
-				Description: "Which flow should be used for ClientAuthenticationFlow",
-				Computed:    true,
-			},
-			"docker_authentication_flow": {
-				Type:        schema.TypeString,
-				Description: "Which flow should be used for DockerAuthenticationFlow",
-				Computed:    true,
-			},
 			"attributes": {
 				Type:     schema.TypeMap,
 				Optional: true,

@@ -107,6 +107,17 @@ func (keycloakClient *KeycloakClient) ListOpenidClientScopesWithFilter(realmId s
 	return openidClientScopes, nil
 }
 
+func (keycloakClient *KeycloakClient) GetOpenIdClientScopeByName(realmId, scopeName string) (*OpenidClientScope, error) {
+	scope, err := keycloakClient.ListOpenidClientScopesWithFilter(realmId, includeOpenidClientScopesMatchingNames([]string{scopeName}))
+	if err != nil {
+		return nil, err
+	}
+	if len(scope) != 1 {
+		return nil, fmt.Errorf("%v scope could not be located", scope)
+	}
+	return scope[0], nil
+}
+
 func includeOpenidClientScopesMatchingNames(scopeNames []string) OpenidClientScopeFilterFunc {
 	return func(scope *OpenidClientScope) bool {
 		for _, scopeName := range scopeNames {

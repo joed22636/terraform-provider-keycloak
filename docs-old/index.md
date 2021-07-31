@@ -1,7 +1,7 @@
 # Installing
 
 You can download the latest version of this provider on the
-[GitHub releases](https://github.com/mrparkers/terraform-provider-keycloak/releases)
+[GitHub releases](https://github.com/joed22636/terraform-provider-keycloak/releases)
 page.
 
 Please follow the [official docs](https://www.terraform.io/docs/configuration/providers.html#third-party-plugins)

@@ -4,7 +4,7 @@ Allows for creating and managing custom user federation providers within Keycloa
 
 A custom user federation provider is an implementation of Keycloak's
 [User Storage SPI](https://www.keycloak.org/docs/4.2/server_development/index.html#_user-storage-spi).
-An example of this implementation can be found [here](https://github.com/mrparkers/terraform-provider-keycloak/tree/master/custom-user-federation-example).
+An example of this implementation can be found [here](https://github.com/joed22636/terraform-provider-keycloak/tree/master/custom-user-federation-example).
 
 ### Example Usage
 

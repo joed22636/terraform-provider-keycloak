@@ -1,6 +1,7 @@
 package keycloak
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -112,4 +113,52 @@ func (keycloakClient *KeycloakClient) DeleteAuthenticationFlow(realmId, id strin
 		return keycloakClient.delete(fmt.Sprintf("/realms/%s/authentication/flows/%s", realmId, id), nil)
 	}
 	return nil
+}
+
+func (keycloakClient *KeycloakClient) DeleteBuiltInFlowExecutors(flow *AuthenticationFlow) error {
+	flow.BuiltIn = false
+	err := keycloakClient.UpdateAuthenticationFlow(flow)
+	if err != nil {
+		return err
+	}
+	executors, err := keycloakClient.ListAuthenticationExecutions(flow.RealmId, flow.Alias)
+	if err != nil {
+		return err
+	}
+	for _, exe := range executors {
+		if len(exe.FlowId) > 0 {
+			var subFlow AuthenticationSubFlow
+			err := keycloakClient.get(fmt.Sprintf("/realms/%s/authentication/flows/%s", flow.RealmId, exe.FlowId), &subFlow, nil)
+			if err != nil {
+				return err
+			}
+			subFlow.RealmId = flow.RealmId
+			subFlow.BuiltIn = false
+			err = keycloakClient.put(fmt.Sprintf("/realms/%s/authentication/flows/%s", subFlow.RealmId, subFlow.Id), subFlow)
+			if err != nil {
+				return err
+			}
+			err = keycloakClient.DeleteAuthenticationExecution(flow.RealmId, exe.Id)
+			if err != nil && !isHttpError(err, 404) { // resource may be deleted with a subflow already
+				return err
+			}
+		} else {
+			err = keycloakClient.DeleteAuthenticationExecution(flow.RealmId, exe.Id)
+			if err != nil && !isHttpError(err, 404) { // resource may be deleted with a subflow already
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func isHttpError(err error, code int) bool {
+	var apiError *ApiError
+	if !errors.As(err, &apiError) {
+		return false
+	}
+	if apiError.Code != code {
+		return false
+	}
+	return true
 }

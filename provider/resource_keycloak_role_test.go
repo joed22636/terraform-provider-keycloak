@@ -2,11 +2,12 @@ package provider
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"testing"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func TestAccKeycloakRole_basicRealm(t *testing.T) {
@@ -27,6 +28,23 @@ func TestAccKeycloakRole_basicRealm(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: testAccRealm.Realm + "/",
+			},
+		},
+	})
+}
+
+func TestAccKeycloakRole_hardCodedHandling(t *testing.T) {
+	t.Parallel()
+	roleName := "uma_authorization"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakRoleDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakRole_basicRealm(roleName),
+				Check:  testAccCheckKeycloakRoleExists("keycloak_role.role"),
 			},
 		},
 	})
@@ -74,6 +92,40 @@ func TestAccKeycloakRole_basicClient(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: testAccRealm.Realm + "/",
+			},
+		},
+	})
+}
+
+func TestAccKeycloakRole_hardcodedClientRoleHandling(t *testing.T) {
+	t.Parallel()
+	roleName := "view-profile"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakRoleDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakRole_accountClient(roleName),
+				Check:  testAccCheckKeycloakRoleExists("keycloak_role.role"),
+			},
+		},
+	})
+}
+
+func TestAccKeycloakRole_hardcodedClientCompositeRoleHandling(t *testing.T) {
+	t.Parallel()
+	roleName := "manage-account"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakRoleDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakRole_accountClient(roleName),
+				Check:  testAccCheckKeycloakRoleExists("keycloak_role.role"),
 			},
 		},
 	})
@@ -467,6 +519,31 @@ resource "keycloak_role" "role" {
 	client_id = keycloak_openid_client.client.id
 }
 	`, testAccRealm.Realm, clientId, role)
+}
+
+func testKeycloakRole_accountClient(role string) string {
+	return fmt.Sprintf(`
+data "keycloak_realm" "realm" {
+	realm = "%s"
+}
+
+resource "keycloak_openid_client" "client" {
+	client_id   = "account"
+	realm_id    = data.keycloak_realm.realm.id
+	access_type = "CONFIDENTIAL"
+	root_url	= "$${authBaseUrl}"
+	admin_url	= "$${authBaseUrl}"
+	valid_redirect_uris = [ "/realms/%s/account/*" ]
+	web_origins = [ "$${authBaseUrl}" ]
+	standard_flow_enabled = true
+}
+
+resource "keycloak_role" "role" {
+	name      = "%s"
+	realm_id  = data.keycloak_realm.realm.id
+	client_id = keycloak_openid_client.client.id
+}
+	`, testAccRealm.Realm, testAccRealm.Realm, role)
 }
 
 func testKeycloakRole_basicSamlClient(clientId, role string) string {

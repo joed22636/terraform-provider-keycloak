@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func TestAccKeycloakLdapHardcodedGroupMapper_basic(t *testing.T) {
@@ -149,6 +149,7 @@ resource "keycloak_ldap_user_federation" "openldap" {
 	users_dn                = "dc=example,dc=org"
 	bind_dn                 = "cn=admin,dc=example,dc=org"
 	bind_credential         = "admin"
+	connection_pooling      = false
 }
 
 resource "keycloak_group" "hardcoded_group_mapper_test" {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -26,6 +26,45 @@ func TestAccKeycloakGenericClientProtocolMapper_basicClient(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testKeycloakGenericClientProtocolMapper_basic_client(clientId, mapperName),
+				Check:  testKeycloakGenericClientProtocolMapperExists(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccKeycloakGenericClientProtocolMapper_hardcodedScopeMapperHanding(t *testing.T) {
+	t.Parallel()
+
+	clientScope := "profile"
+	mapperName := "full name"
+
+	resourceName := "keycloak_generic_client_protocol_mapper.client_protocol_mapper"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccKeycloakGenericClientProtocolMapperDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakGenericClientProtocolMapper_basic_clientScope(clientScope, mapperName),
+				Check:  testKeycloakGenericClientProtocolMapperExists(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccKeycloakGenericClientProtocolMapper_hardcodedClientMapperHanding(t *testing.T) {
+	t.Parallel()
+
+	resourceName := "keycloak_generic_client_protocol_mapper.client_protocol_mapper"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccKeycloakGenericClientProtocolMapperDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakGenericClientProtocolMapper_basic_hardcodedClientMapper(),
 				Check:  testKeycloakGenericClientProtocolMapperExists(resourceName),
 			},
 		},
@@ -193,6 +232,57 @@ resource "keycloak_generic_client_protocol_mapper" "client_protocol_mapper" {
 		"claim.name"     = "bar"
 	}
 }`, testAccRealm.Realm, clientScopeId, mapperName)
+}
+
+func testKeycloakGenericClientProtocolMapper_basic_hardcodedClientMapper() string {
+	return fmt.Sprintf(`
+data "keycloak_realm" "realm" {
+	realm = "%s"
+}
+
+resource "keycloak_openid_client" "security_admin_console" {
+	realm_id = data.keycloak_realm.realm.id
+	client_id = "security-admin-console"
+	name = "$${client_security-admin-console}"
+	enabled = true
+	access_type = "PUBLIC"
+	standard_flow_enabled = true
+	implicit_flow_enabled = false
+	direct_access_grants_enabled = false
+	service_accounts_enabled = false
+	valid_redirect_uris = [
+		"/admin/test/console/*",
+	]
+	web_origins = [
+		"+",
+	]
+	root_url = "$${authAdminUrl}"
+	base_url = "/admin/test/console/"
+	admin_url = "/admin/test/console/"
+	pkce_code_challenge_method = "S256"
+	full_scope_allowed = false
+	consent_required = false
+	client_offline_session_idle_timeout = ""
+	client_offline_session_max_lifespan = ""
+	client_session_idle_timeout = ""
+	client_session_max_lifespan = ""
+}
+
+resource "keycloak_generic_client_protocol_mapper" "client_protocol_mapper" {
+	realm_id = data.keycloak_realm.realm.id
+	client_id = keycloak_openid_client.security_admin_console.id
+	name = "locale"
+	protocol = "openid-connect"
+	protocol_mapper = "oidc-usermodel-attribute-mapper"
+	config = {
+		"access.token.claim" = "true"
+		"claim.name" = "locale"
+		"id.token.claim" = "true"
+		"jsonType.label" = "String"
+		"user.attribute" = "locale"
+		"userinfo.token.claim" = "true"
+	}
+}`, testAccRealm.Realm)
 }
 
 func testKeycloakGenericClientProtocolMapper_import(clientId string, mapperName string) string {

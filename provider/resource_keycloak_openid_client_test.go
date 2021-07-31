@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func TestAccKeycloakOpenidClient_basic(t *testing.T) {
@@ -30,6 +30,23 @@ func TestAccKeycloakOpenidClient_basic(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateIdPrefix:     testAccRealm.Realm + "/",
 				ImportStateVerifyIgnore: []string{"exclude_session_state_from_auth_response"},
+			},
+		},
+	})
+}
+
+func TestAccKeycloakOpenidClient_hardcodedHanding(t *testing.T) {
+	t.Parallel()
+	clientId := "admin-cli"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakOpenidClientDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakOpenidClient_basic(clientId),
+				Check:  testAccCheckKeycloakOpenidClientExistsWithCorrectProtocol("keycloak_openid_client.client"),
 			},
 		},
 	})
@@ -339,6 +356,8 @@ func TestAccKeycloakOpenidClient_secret(t *testing.T) {
 }
 
 func TestAccKeycloakOpenidClient_redirectUrisValidation(t *testing.T) {
+	t.Skip("THIS CHECK IS DISABLED IN THIS PLUGIN AS DEFAULT KEYCLOAK CLIENTS ARE ALREADY VIOLATING THIS RULE")
+
 	t.Parallel()
 	clientId := acctest.RandomWithPrefix("tf-acc")
 	accessType := randomStringInSlice([]string{"PUBLIC", "CONFIDENTIAL"})

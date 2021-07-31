@@ -60,7 +60,7 @@ The following arguments are supported:
 - `first_name` - (Optional) The user's first name.
 - `last_name` - (Optional) The user's last name.
 - `attributes` - (Optional) A map representing attributes for the user
-- `federated_identity` - (Optional) When specified, the user will be linked to a federated identity provider. Refer to the [federated user example](https://github.com/mrparkers/terraform-provider-keycloak/blob/master/example/federated_user_example.tf) for more details.
+- `federated_identity` - (Optional) When specified, the user will be linked to a federated identity provider. Refer to the [federated user example](https://github.com/joed22636/terraform-provider-keycloak/blob/master/example/federated_user_example.tf) for more details.
     - `identity_provider` - (Required) The name of the identity provider
     - `user_id` - (Required) The ID of the user defined in the identity provider
     - `user_name` - (Required) The user name of the user defined in the identity provider

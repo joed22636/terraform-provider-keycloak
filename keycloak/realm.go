@@ -150,10 +150,23 @@ type SmtpServer struct {
 	Password           string             `json:"password,omitempty"`
 }
 
+type DefaultClientScope struct {
+	Id   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+type DefaultClientScopes struct {
+	Default  []DefaultClientScope
+	Optional []DefaultClientScope
+}
+
 func (keycloakClient *KeycloakClient) NewRealm(realm *Realm) error {
 	_, _, err := keycloakClient.post("/realms", realm)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return keycloakClient.updateDefaultClientScopes(realm)
 }
 
 func (keycloakClient *KeycloakClient) GetRealm(name string) (*Realm, error) {
@@ -163,7 +176,67 @@ func (keycloakClient *KeycloakClient) GetRealm(name string) (*Realm, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	err = keycloakClient.fillInRealDefaultClientScopes(&realm)
+	if err != nil {
+		return nil, err
+	}
+
 	return &realm, nil
+}
+
+func (keycloakClient *KeycloakClient) getCurrentDefaultClientScopes(realm string) (DefaultClientScopes, error) {
+	var result DefaultClientScopes
+
+	err := keycloakClient.get(fmt.Sprintf("/realms/%s/default-default-client-scopes", realm), &(result.Default), nil)
+	if err != nil {
+		return result, err
+	}
+
+	err = keycloakClient.get(fmt.Sprintf("/realms/%s/default-optional-client-scopes", realm), &(result.Optional), nil)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (keycloakClient *KeycloakClient) getDefaultClientScopesByDefinition(realm *Realm) (DefaultClientScopes, error) {
+	var result DefaultClientScopes
+	var allDefaultClientScopes []DefaultClientScope
+
+	err := keycloakClient.get(fmt.Sprintf("/realms/%s/client-scopes", realm.Realm), &allDefaultClientScopes, nil)
+	if err != nil {
+		return result, err
+	}
+
+	for _, scope := range allDefaultClientScopes {
+		if contains(realm.DefaultDefaultClientScopes, scope.Name) {
+			result.Default = append(result.Default, scope)
+		} else if contains(realm.DefaultOptionalClientScopes, scope.Name) {
+			result.Optional = append(result.Optional, scope)
+		}
+	}
+
+	return result, nil
+}
+
+func (keycloakClient *KeycloakClient) fillInRealDefaultClientScopes(realm *Realm) error {
+
+	dcs, err := keycloakClient.getCurrentDefaultClientScopes(realm.Realm)
+	if err != nil {
+		return err
+	}
+
+	for _, docs := range dcs.Default {
+		realm.DefaultDefaultClientScopes = append(realm.DefaultDefaultClientScopes, docs.Name)
+	}
+
+	for _, docs := range dcs.Optional {
+		realm.DefaultOptionalClientScopes = append(realm.DefaultOptionalClientScopes, docs.Name)
+	}
+
+	return nil
 }
 
 func (keycloakClient *KeycloakClient) GetRealms() ([]*Realm, error) {
@@ -172,6 +245,13 @@ func (keycloakClient *KeycloakClient) GetRealms() ([]*Realm, error) {
 	err := keycloakClient.get("/realms", &realms, nil)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, realm := range realms {
+		err = keycloakClient.fillInRealDefaultClientScopes(realm)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return realms, nil
@@ -189,7 +269,60 @@ func (keycloakClient *KeycloakClient) GetRealmKeys(name string) (*Keys, error) {
 }
 
 func (keycloakClient *KeycloakClient) UpdateRealm(realm *Realm) error {
-	return keycloakClient.put(fmt.Sprintf("/realms/%s", realm.Realm), realm)
+	err := keycloakClient.put(fmt.Sprintf("/realms/%s", realm.Realm), realm)
+	if err != nil {
+		return err
+	}
+	keycloakClient.updateDefaultClientScopes(realm)
+	return nil
+}
+
+func (keycloakClient *KeycloakClient) updateDefaultClientScopes(realm *Realm) error {
+	dcss, err := keycloakClient.getCurrentDefaultClientScopes(realm.Realm)
+	if err != nil {
+		return err
+	}
+	keycloakClient.removeDefaultClientScopesFromRealm(realm, dcss)
+	dcss, err = keycloakClient.getDefaultClientScopesByDefinition(realm)
+	if err != nil {
+		return err
+	}
+	keycloakClient.assignDefaultClientScopesToRealm(realm, dcss)
+
+	return nil
+}
+
+func (keycloakClient *KeycloakClient) removeDefaultClientScopesFromRealm(realm *Realm, dcss DefaultClientScopes) error {
+	for _, dcs := range dcss.Default {
+		err := keycloakClient.DeleteDefaultDefaultClientScope(realm.Realm, dcs.Id)
+		if err != nil {
+			return err
+		}
+	}
+	for _, dcs := range dcss.Optional {
+		err := keycloakClient.DeleteOptionalDefaultClientScope(realm.Realm, dcs.Id)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (keycloakClient *KeycloakClient) assignDefaultClientScopesToRealm(realm *Realm, dcss DefaultClientScopes) error {
+	for _, scope := range dcss.Default {
+		err := keycloakClient.AddDefaultDefaultClientScope(realm.Realm, scope)
+		if err != nil {
+			return err
+		}
+	}
+	for _, scope := range dcss.Optional {
+		err := keycloakClient.AddOptionalDefaultClientScope(realm.Realm, scope)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (keycloakClient *KeycloakClient) DeleteRealm(name string) error {

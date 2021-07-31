@@ -1,19 +1,19 @@
 package keycloak
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"crypto/tls"
 	"io/ioutil"
 	"log"
+	"net/http"
+	"net/http/cookiejar"
 	"os"
 	"strconv"
 	"testing"
-)
+	"time"
 
-var requiredEnvironmentVariables = []string{
-	"KEYCLOAK_CLIENT_ID",
-	"KEYCLOAK_URL",
-	"KEYCLOAK_REALM",
-}
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"golang.org/x/net/publicsuffix"
+)
 
 // Some actions, such as creating a realm, require a refresh
 // before a GET can be performed on that realm
@@ -76,15 +76,6 @@ func TestAccKeycloakApiClientRefresh(t *testing.T) {
 		t.Fatalf("%s", err)
 	}
 
-	var oldAccessToken, oldRefreshToken, oldTokenType string
-
-	// A following GET for this realm will result in a 403, so we should save the current access and refresh token
-	if keycloakClient.clientCredentials.GrantType == "client_credentials" {
-		oldAccessToken = keycloakClient.clientCredentials.AccessToken
-		oldRefreshToken = keycloakClient.clientCredentials.RefreshToken
-		oldTokenType = keycloakClient.clientCredentials.TokenType
-	}
-
 	_, err = keycloakClient.GetRealm(realmName) // This should not fail since it will automatically refresh and try again
 	if err != nil {
 		t.Fatalf("%s", err)
@@ -96,21 +87,48 @@ func TestAccKeycloakApiClientRefresh(t *testing.T) {
 		t.Fatalf("%s", err)
 	}
 
-	if keycloakClient.clientCredentials.GrantType == "client_credentials" {
-		newAccessToken := keycloakClient.clientCredentials.AccessToken
-		newRefreshToken := keycloakClient.clientCredentials.RefreshToken
-		newTokenType := keycloakClient.clientCredentials.TokenType
+}
 
-		if oldAccessToken == newAccessToken {
-			t.Fatalf("expected access token to update after refresh")
-		}
-
-		if oldRefreshToken == newRefreshToken {
-			t.Fatalf("expected refresh token to update after refresh")
-		}
-
-		if oldTokenType != newTokenType {
-			t.Fatalf("expected token type to remain the same after refresh")
-		}
+func TestKeycloakApiClientRefresh(t *testing.T) {
+	// t.Skip("just a play around test case - can be removed")
+	cookieJar, err := cookiejar.New(&cookiejar.Options{
+		PublicSuffixList: publicsuffix.List,
+	})
+	if err != nil {
+		t.Fatal("cookiejar issue")
 	}
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
+		Proxy:           http.ProxyFromEnvironment,
+	}
+	httpClient := &http.Client{
+		Timeout:   time.Second * time.Duration(30),
+		Transport: transport,
+		Jar:       cookieJar,
+	}
+
+	username := "keycloak"
+	password := "password"
+	clientCredentials := &ClientCredentials{
+		ClientId:     "admin-cli",
+		ClientSecret: "",
+	}
+	clientCredentials.Username = username
+	clientCredentials.Password = password
+	clientCredentials.GrantType = "password"
+
+	keycloakClient := KeycloakClient{
+		baseUrl:           "http://localhost:8080" + "/auth",
+		clientCredentials: clientCredentials,
+		httpClient:        httpClient,
+		initialLogin:      false,
+		realm:             "master",
+		userAgent:         "HashiCorp Terraform/%s (+https://www.terraform.io) Terraform Plugin SDK/%s",
+		additionalHeaders: nil,
+	}
+
+	ldapId := "74f85131-fd7f-4f94-851b-0e849f2508e5"
+	e := keycloakClient.DeleteLdapUserFederationMappers("test", ldapId)
+
+	log.Println(e)
 }

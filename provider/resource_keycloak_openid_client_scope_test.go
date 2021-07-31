@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func TestAccKeycloakClientScope_basic(t *testing.T) {
@@ -29,6 +29,23 @@ func TestAccKeycloakClientScope_basic(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: testAccRealm.Realm + "/",
+			},
+		},
+	})
+}
+
+func TestAccKeycloakClientScope_hardcodedHandling(t *testing.T) {
+	t.Parallel()
+	clientScopeName := "profile"
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakClientScopeDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakClientScope_basic(clientScopeName),
+				Check:  testAccCheckKeycloakClientScopeExistsWithCorrectProtocol("keycloak_openid_client_scope.client_scope"),
 			},
 		},
 	})

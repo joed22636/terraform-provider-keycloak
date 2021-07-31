@@ -2,11 +2,12 @@ package provider
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"testing"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func TestAccKeycloakAuthenticationFlow_basic(t *testing.T) {
@@ -27,6 +28,29 @@ func TestAccKeycloakAuthenticationFlow_basic(t *testing.T) {
 				ImportState:         true,
 				ImportStateVerify:   true,
 				ImportStateIdPrefix: testAccRealm.Realm + "/",
+			},
+		},
+	})
+}
+
+func TestAccKeycloakAuthenticationFlow_createHardcodedFlow(t *testing.T) {
+	t.Parallel()
+
+	resource.Test(t, resource.TestCase{
+		ProviderFactories: testAccProviderFactories,
+		PreCheck:          func() { testAccPreCheck(t) },
+		CheckDestroy:      testAccCheckKeycloakAuthenticationFlowDestroy(),
+		Steps: []resource.TestStep{
+			{
+				Config: testKeycloakAuthenticationFlow_hardcoded("desc1"),
+				Check:  testAccCheckKeycloakAuthenticationFlowExists("keycloak_authentication_flow.flow"),
+			},
+			{
+				Config: testKeycloakAuthenticationFlow_hardcoded("desc2"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckKeycloakAuthenticationFlowExists("keycloak_authentication_flow.flow"),
+					resource.TestCheckResourceAttr("keycloak_authentication_flow.flow", "description", "desc2"),
+				),
 			},
 		},
 	})
@@ -209,6 +233,20 @@ resource "keycloak_authentication_flow" "flow" {
 	alias    = "%s"
 }
 	`, testAccRealm.Realm, alias)
+}
+
+func testKeycloakAuthenticationFlow_hardcoded(description string) string {
+	return fmt.Sprintf(`
+data "keycloak_realm" "realm" {
+	realm = "%s"
+}
+
+resource "keycloak_authentication_flow" "flow" {
+	realm_id = data.keycloak_realm.realm.id
+	alias    = "browser"
+	description = "%s"
+}
+	`, testAccRealm.Realm, description)
 }
 
 func testKeycloakAuthenticationFlow_updateRealmBefore(alias string) string {

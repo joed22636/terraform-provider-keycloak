@@ -1,12 +1,14 @@
 package provider
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func resourceKeycloakOpenidClientScope() *schema.Resource {
@@ -99,7 +101,26 @@ func resourceKeycloakOpenidClientScopeCreate(data *schema.ResourceData, meta int
 
 	err := keycloakClient.NewOpenidClientScope(clientScope)
 	if err != nil {
-		return err
+		var ae *keycloak.ApiError
+		if !errors.As(err, &ae) {
+			return err
+		}
+
+		if ae.Code != 409 {
+			return err
+		}
+
+		log.Println("resource already exists, may be hardcoded, try to update")
+		sc, err1 := keycloakClient.GetOpenIdClientScopeByName(clientScope.RealmId, clientScope.Name)
+		if err1 != nil {
+			return err1
+		}
+		data.SetId(sc.Id)
+		clientScope.Id = sc.Id
+		err = resourceKeycloakOpenidClientScopeUpdate(data, meta)
+		if err != nil {
+			return err
+		}
 	}
 
 	setClientScopeData(data, clientScope)
@@ -144,7 +165,24 @@ func resourceKeycloakOpenidClientScopeDelete(data *schema.ResourceData, meta int
 	realmId := data.Get("realm_id").(string)
 	id := data.Id()
 
-	return keycloakClient.DeleteOpenidClientScope(realmId, id)
+	err := keycloakClient.DeleteOpenidClientScope(realmId, id)
+	if err != nil {
+		var ae *keycloak.ApiError
+		if !errors.As(err, &ae) {
+			return err
+		}
+
+		if ae.Code != 400 {
+			return err
+		}
+
+		if !strings.Contains(ae.Message, "Cannot remove client scope, it is currently in use") {
+			return err
+		}
+
+		log.Println("resource cannot be deleted, ignore error (probably built-in resource and/or still referenced by another resource)")
+	}
+	return nil
 }
 
 func resourceKeycloakOpenidClientScopeImport(d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {

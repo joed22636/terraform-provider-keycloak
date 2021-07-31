@@ -1,10 +1,11 @@
 package provider
 
 import (
+	"regexp"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
-	"regexp"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 var (

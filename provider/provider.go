@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func KeycloakProvider(client *keycloak.KeycloakClient) *schema.Provider {
@@ -96,6 +96,7 @@ func KeycloakProvider(client *keycloak.KeycloakClient) *schema.Provider {
 			"keycloak_authentication_subflow":                            resourceKeycloakAuthenticationSubFlow(),
 			"keycloak_authentication_execution":                          resourceKeycloakAuthenticationExecution(),
 			"keycloak_authentication_execution_config":                   resourceKeycloakAuthenticationExecutionConfig(),
+			"keycloak_authentication_bindings":                           resourceKeycloakAuthenticationBindings(),
 			"keycloak_identity_provider_token_exchange_scope_permission": resourceKeycloakIdentityProviderTokenExchangeScopePermission(),
 			"keycloak_openid_client_permissions":                         resourceKeycloakOpenidClientPermissions(),
 			"keycloak_users_permissions":                                 resourceKeycloakUsersPermissions(),

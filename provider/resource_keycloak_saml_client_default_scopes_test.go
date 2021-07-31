@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 // All saml clients in Keycloak will automatically have these scopes listed as "default client scopes".
@@ -258,7 +258,7 @@ func TestAccKeycloakSamlClientDefaultScopes_profileAndEmailDefaultScopes(t *test
 		Steps: []resource.TestStep{
 			{
 				Config:             testKeycloakSamlClientDefaultScopes_listOfScopes(client, clientScope, []string{clientScope}),
-				Check:              testAccCheckKeycloakSamlClientHasDefaultScopes("keycloak_saml_client.client", append(preAssignedDefaultSamlClientScopes, clientScope)),
+				Check:              testAccCheckKeycloakSamlClientHasDefaultScopes("keycloak_saml_client.client", []string{clientScope}),
 				ExpectNonEmptyPlan: true,
 			},
 		},

@@ -1,11 +1,13 @@
 package provider
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
+	"github.com/joed22636/terraform-provider-keycloak/keycloak"
 )
 
 func resourceKeycloakRole() *schema.Resource {
@@ -112,7 +114,26 @@ func resourceKeycloakRoleCreate(data *schema.ResourceData, meta interface{}) err
 
 	err := keycloakClient.CreateRole(role)
 	if err != nil {
-		return err
+		var ae *keycloak.ApiError
+		if !errors.As(err, &ae) {
+			return err
+		}
+
+		if ae.Code != 409 {
+			return err
+		}
+
+		log.Println("resource already exists, may be hardcoded, try to update")
+		r, err1 := keycloakClient.GetRoleByName(role.RealmId, role.ClientId, role.Name)
+		if err1 != nil {
+			return err1
+		}
+		data.SetId(r.Id)
+		role.Id = r.Id
+		err = resourceKeycloakRoleUpdate(data, meta)
+		if err != nil {
+			return err
+		}
 	}
 
 	if role.Composite {

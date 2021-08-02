@@ -127,8 +127,12 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		additionalHeaders: nil,
 	}
 
-	ldapId := "74f85131-fd7f-4f94-851b-0e849f2508e5"
-	e := keycloakClient.DeleteLdapUserFederationMappers("test", ldapId)
+	r, e := keycloakClient.GetDefaultRoles("test")
+	log.Println(r, e)
 
-	log.Println(e)
+	r.DefaultRoles = []string{"offline_access"}
+
+	e = keycloakClient.UpdateDefaultRoles(r)
+
+	log.Println(r, e)
 }

@@ -581,10 +581,6 @@ func (keycloakClient *KeycloakClient) GetLdapUserFederationMappers(realmId, id s
 	return &ldapUserFederationMappers, nil
 }
 
-func (keycloakClient *KeycloakClient) DeleteComponent(realmId, id string) error {
-	return keycloakClient.delete(fmt.Sprintf("/realms/%s/components/%s", realmId, id), nil)
-}
-
 func (keycloakClient *KeycloakClient) DeleteLdapUserFederationMappers(realmId, ldapUserFederationId string) error {
 	var components []*component
 

@@ -1,5 +1,7 @@
 package keycloak
 
+import "fmt"
+
 // https://www.keycloak.org/docs-api/4.2/rest-api/index.html#_component_resource
 
 type component struct {
@@ -25,4 +27,26 @@ func (component *component) getConfigOk(val string) (string, bool) {
 	}
 
 	return "", false
+}
+
+func (keycloakClient *KeycloakClient) GetComponents(realm, parent, providerType string) ([]component, error) {
+	result := []component{}
+	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components?parent=%s&type=%s", realm, parent, providerType), &result, nil)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (keycloakClient *KeycloakClient) CreateComponent(realm string, component component) error {
+	_, _, err := keycloakClient.post(fmt.Sprintf("/realms/%s/components", realm), component)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (keycloakClient *KeycloakClient) DeleteComponent(realmId, id string) error {
+	return keycloakClient.delete(fmt.Sprintf("/realms/%s/components/%s", realmId, id), nil)
 }

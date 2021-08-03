@@ -90,7 +90,7 @@ func TestAccKeycloakApiClientRefresh(t *testing.T) {
 }
 
 func TestKeycloakApiClientRefresh(t *testing.T) {
-	t.Skip("just a play around test case - can be removed")
+	// t.Skip("just a play around test case - can be removed")
 	cookieJar, err := cookiejar.New(&cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	})
@@ -127,12 +127,10 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		additionalHeaders: nil,
 	}
 
-	r, e := keycloakClient.GetDefaultRoles("test")
+	r, e := keycloakClient.GetComponents("test", "test", "org.keycloak.keys.KeyProvider")
 	log.Println(r, e)
-
-	r.DefaultRoles = []string{"offline_access"}
-
-	e = keycloakClient.UpdateDefaultRoles(r)
+	e = keycloakClient.DeleteComponent("test", r[0].Id)
 
 	log.Println(r, e)
+	log.Println(r[0].Config, e)
 }

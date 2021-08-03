@@ -133,3 +133,90 @@ file: resource_*, e.g. resource_keycloak_authentication_bindings.go
 # License
 
 [MIT](https://github.com/joed22636/terraform-provider-keycloak/blob/master/LICENSE)
+
+# Support keys 
+
+Json def:
+  see ldap_user_federation.go - similar json definition 
+    defined in keycloak as component
+    component has in go a struct which maps to json
+    we need to map the model to the component struct (not directly to json)
+TF def: tbd 
+Import: wont be straight forward how to import key providers
+
+## Creation 
+
+```
+POST http://localhost:8080/auth/admin/realms/test/components
+{
+  "name": "ecdsa-generated",
+  "providerId": "ecdsa-generated",
+  "providerType": "org.keycloak.keys.KeyProvider",
+  "parentId": "test",
+  "config": {
+    "priority": ["0"],
+    "enabled": ["true"],
+    "active": ["true"],
+    "ecdsaEllipticCurveKey": ["P-521"]
+  }
+}
+
+```
+
+
+## Get 
+
+```
+http://localhost:8080/auth/admin/realms/test/components?parent=test&type=org.keycloak.keys.KeyProvider
+```
+
+Result: 
+
+```
+[
+  {
+    "id": "8683faf0-990e-446d-8eca-31fdc3655961",
+    "name": "ecdsa-generated",
+    "providerId": "ecdsa-generated",
+    "providerType": "org.keycloak.keys.KeyProvider",
+    "parentId": "test",
+    "config": {
+      "ecdsaEllipticCurveKey": ["P-521"],
+      "active": ["true"],
+      "priority": ["0"],
+      "enabled": ["true"]
+    }
+  },
+  {
+    "id": "7a79de5e-ce98-49bc-b8a6-3fd4b15308f1",
+    "name": "hmac-generated",
+    "providerId": "hmac-generated",
+    "providerType": "org.keycloak.keys.KeyProvider",
+    "parentId": "test",
+    "config": { "priority": ["100"], "algorithm": ["HS256"] }
+  },
+  {
+    "id": "6e381daf-0718-4aa6-9fa4-e60c1cf61c57",
+    "name": "aes-generated",
+    "providerId": "aes-generated",
+    "providerType": "org.keycloak.keys.KeyProvider",
+    "parentId": "test",
+    "config": { "priority": ["100"] }
+  },
+  {
+    "id": "efaac684-5c1b-49f8-a987-418f2d726fba",
+    "name": "rsa-generated",
+    "providerId": "rsa-generated",
+    "providerType": "org.keycloak.keys.KeyProvider",
+    "parentId": "test",
+    "config": { "priority": ["100"] }
+  }
+]
+
+```
+
+## Delete 
+
+```
+http://localhost:8080/auth/admin/realms/test/components/5d423be1-300c-48d7-8a7d-9a9bae3b19f1
+```

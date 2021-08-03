@@ -96,10 +96,18 @@ func resourceKeycloakDefaultRolesDelete(data *schema.ResourceData, meta interfac
 }
 
 func getDefaultRolesFromData(data *schema.ResourceData) (*keycloak.DefaultRoles, error) {
-	return &keycloak.DefaultRoles{
-		RealmId:      data.Get("realm_id").(string),
-		DefaultRoles: data.Get("default_roles").([]string),
-	}, nil
+	result := &keycloak.DefaultRoles{
+		RealmId: data.Get("realm_id").(string),
+		// DefaultRoles: data.Get("default_roles").([]string),
+	}
+	defaultRoles := make([]string, 0)
+	if v, ok := data.GetOk("default_roles"); ok {
+		for _, defaultRole := range v.(*schema.Set).List() {
+			defaultRoles = append(defaultRoles, defaultRole.(string))
+		}
+	}
+	result.DefaultRoles = defaultRoles
+	return result, nil
 }
 
 func setDefaultRoles(data *schema.ResourceData, json *keycloak.DefaultRoles) {

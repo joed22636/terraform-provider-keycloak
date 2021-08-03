@@ -11,8 +11,8 @@ type LdapMsadLdsUserAccountControlMapper struct {
 	LdapUserFederationId string
 }
 
-func convertFromLdapMsadLdsUserAccountControlMapperToComponent(ldapMsadLdsUserAccountControlMapper *LdapMsadLdsUserAccountControlMapper) *component {
-	return &component{
+func convertFromLdapMsadLdsUserAccountControlMapperToComponent(ldapMsadLdsUserAccountControlMapper *LdapMsadLdsUserAccountControlMapper) *Component {
+	return &Component{
 		Id:           ldapMsadLdsUserAccountControlMapper.Id,
 		Name:         ldapMsadLdsUserAccountControlMapper.Name,
 		ProviderId:   "msad-lds-user-account-control-mapper",
@@ -21,7 +21,7 @@ func convertFromLdapMsadLdsUserAccountControlMapperToComponent(ldapMsadLdsUserAc
 	}
 }
 
-func convertFromComponentToLdapMsadLdsUserAccountControlMapper(component *component, realmId string) (*LdapMsadLdsUserAccountControlMapper, error) {
+func convertFromComponentToLdapMsadLdsUserAccountControlMapper(component *Component, realmId string) (*LdapMsadLdsUserAccountControlMapper, error) {
 	return &LdapMsadLdsUserAccountControlMapper{
 		Id:                   component.Id,
 		Name:                 component.Name,
@@ -42,7 +42,7 @@ func (keycloakClient *KeycloakClient) NewLdapMsadLdsUserAccountControlMapper(lda
 }
 
 func (keycloakClient *KeycloakClient) GetLdapMsadLdsUserAccountControlMapper(realmId, id string) (*LdapMsadLdsUserAccountControlMapper, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {

@@ -26,7 +26,7 @@ type LdapRoleMapper struct {
 	ClientId                    string
 }
 
-func convertFromLdapRoleMapperToComponent(ldapRoleMapper *LdapRoleMapper) *component {
+func convertFromLdapRoleMapperToComponent(ldapRoleMapper *LdapRoleMapper) *Component {
 	componentConfig := map[string][]string{
 		"roles.dn": {
 			ldapRoleMapper.LdapRolesDn,
@@ -68,7 +68,7 @@ func convertFromLdapRoleMapperToComponent(ldapRoleMapper *LdapRoleMapper) *compo
 		componentConfig["client.id"] = []string{ldapRoleMapper.ClientId}
 	}
 
-	return &component{
+	return &Component{
 		Id:           ldapRoleMapper.Id,
 		Name:         ldapRoleMapper.Name,
 		ProviderId:   "role-ldap-mapper",
@@ -78,7 +78,7 @@ func convertFromLdapRoleMapperToComponent(ldapRoleMapper *LdapRoleMapper) *compo
 	}
 }
 
-func convertFromComponentToLdapRoleMapper(component *component, realmId string) (*LdapRoleMapper, error) {
+func convertFromComponentToLdapRoleMapper(component *Component, realmId string) (*LdapRoleMapper, error) {
 	roleObjectClasses := strings.Split(component.getConfig("role.object.classes"), ",")
 	for i, v := range roleObjectClasses {
 		roleObjectClasses[i] = strings.TrimSpace(v)
@@ -134,7 +134,7 @@ func (keycloakClient *KeycloakClient) NewLdapRoleMapper(ldapRoleMapper *LdapRole
 }
 
 func (keycloakClient *KeycloakClient) GetLdapRoleMapper(realmId, id string) (*LdapRoleMapper, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {

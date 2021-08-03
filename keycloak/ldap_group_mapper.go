@@ -31,7 +31,7 @@ type LdapGroupMapper struct {
 	GroupsPath string
 }
 
-func convertFromLdapGroupMapperToComponent(ldapGroupMapper *LdapGroupMapper) *component {
+func convertFromLdapGroupMapperToComponent(ldapGroupMapper *LdapGroupMapper) *Component {
 	componentConfig := map[string][]string{
 		"groups.dn": {
 			ldapGroupMapper.LdapGroupsDn,
@@ -82,7 +82,7 @@ func convertFromLdapGroupMapperToComponent(ldapGroupMapper *LdapGroupMapper) *co
 		componentConfig["mapped.group.attributes"] = []string{strings.Join(ldapGroupMapper.MappedGroupAttributes, ",")}
 	}
 
-	return &component{
+	return &Component{
 		Id:           ldapGroupMapper.Id,
 		Name:         ldapGroupMapper.Name,
 		ProviderId:   "group-ldap-mapper",
@@ -92,7 +92,7 @@ func convertFromLdapGroupMapperToComponent(ldapGroupMapper *LdapGroupMapper) *co
 	}
 }
 
-func convertFromComponentToLdapGroupMapper(component *component, realmId string) (*LdapGroupMapper, error) {
+func convertFromComponentToLdapGroupMapper(component *Component, realmId string) (*LdapGroupMapper, error) {
 	groupObjectClasses := strings.Split(component.getConfig("group.object.classes"), ",")
 	for i, v := range groupObjectClasses {
 		groupObjectClasses[i] = strings.TrimSpace(v)
@@ -170,7 +170,7 @@ func (keycloakClient *KeycloakClient) NewLdapGroupMapper(ldapGroupMapper *LdapGr
 }
 
 func (keycloakClient *KeycloakClient) GetLdapGroupMapper(realmId, id string) (*LdapGroupMapper, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {

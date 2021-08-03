@@ -14,8 +14,8 @@ type LdapMsadUserAccountControlMapper struct {
 	LdapPasswordPolicyHintsEnabled bool
 }
 
-func convertFromLdapMsadUserAccountControlMapperToComponent(ldapMsadUserAccountControlMapper *LdapMsadUserAccountControlMapper) *component {
-	return &component{
+func convertFromLdapMsadUserAccountControlMapperToComponent(ldapMsadUserAccountControlMapper *LdapMsadUserAccountControlMapper) *Component {
+	return &Component{
 		Id:           ldapMsadUserAccountControlMapper.Id,
 		Name:         ldapMsadUserAccountControlMapper.Name,
 		ProviderId:   "msad-user-account-control-mapper",
@@ -29,7 +29,7 @@ func convertFromLdapMsadUserAccountControlMapperToComponent(ldapMsadUserAccountC
 	}
 }
 
-func convertFromComponentToLdapMsadUserAccountControlMapper(component *component, realmId string) (*LdapMsadUserAccountControlMapper, error) {
+func convertFromComponentToLdapMsadUserAccountControlMapper(component *Component, realmId string) (*LdapMsadUserAccountControlMapper, error) {
 	ldapPasswordPolicyHintsEnabled, err := parseBoolAndTreatEmptyStringAsFalse(component.getConfig("ldap.password.policy.hints.enabled"))
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (keycloakClient *KeycloakClient) NewLdapMsadUserAccountControlMapper(ldapMs
 }
 
 func (keycloakClient *KeycloakClient) GetLdapMsadUserAccountControlMapper(realmId, id string) (*LdapMsadUserAccountControlMapper, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {

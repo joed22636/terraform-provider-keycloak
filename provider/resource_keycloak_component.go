@@ -247,7 +247,7 @@ func resourceKeycloakComponent() *schema.Resource {
 	}
 }
 
-func getComponentFromData(data *schema.ResourceData) *keycloak.component {
+func getComponentFromData(data *schema.ResourceData) *keycloak.Component {
 	var userObjectClasses []string
 
 	for _, userObjectClass := range data.Get("user_object_classes").([]interface{}) {
@@ -255,100 +255,100 @@ func getComponentFromData(data *schema.ResourceData) *keycloak.component {
 	}
 
 	component := &keycloak.Component{
-		Id:      data.Id(),
-		Name:    data.Get("name").(string),
-		RealmId: data.Get("realm_id").(string),
+		Id:   data.Id(),
+		Name: data.Get("name").(string),
+		// RealmId: data.Get("realm_id").(string),
 
-		Enabled:  data.Get("enabled").(bool),
-		Priority: data.Get("priority").(int),
+		// Enabled:  data.Get("enabled").(bool),
+		// Priority: data.Get("priority").(int),
 
-		ImportEnabled:     data.Get("import_enabled").(bool),
-		EditMode:          data.Get("edit_mode").(string),
-		SyncRegistrations: data.Get("sync_registrations").(bool),
+		// ImportEnabled:     data.Get("import_enabled").(bool),
+		// EditMode:          data.Get("edit_mode").(string),
+		// SyncRegistrations: data.Get("sync_registrations").(bool),
 
-		Vendor:                 data.Get("vendor").(string),
-		UsernameLDAPAttribute:  data.Get("username_ldap_attribute").(string),
-		RdnLDAPAttribute:       data.Get("rdn_ldap_attribute").(string),
-		UuidLDAPAttribute:      data.Get("uuid_ldap_attribute").(string),
-		UserObjectClasses:      userObjectClasses,
-		ConnectionUrl:          data.Get("connection_url").(string),
-		UsersDn:                data.Get("users_dn").(string),
-		BindDn:                 data.Get("bind_dn").(string),
-		BindCredential:         data.Get("bind_credential").(string),
-		CustomUserSearchFilter: data.Get("custom_user_search_filter").(string),
-		SearchScope:            data.Get("search_scope").(string),
+		// Vendor:                 data.Get("vendor").(string),
+		// UsernameLDAPAttribute:  data.Get("username_ldap_attribute").(string),
+		// RdnLDAPAttribute:       data.Get("rdn_ldap_attribute").(string),
+		// UuidLDAPAttribute:      data.Get("uuid_ldap_attribute").(string),
+		// UserObjectClasses:      userObjectClasses,
+		// ConnectionUrl:          data.Get("connection_url").(string),
+		// UsersDn:                data.Get("users_dn").(string),
+		// BindDn:                 data.Get("bind_dn").(string),
+		// BindCredential:         data.Get("bind_credential").(string),
+		// CustomUserSearchFilter: data.Get("custom_user_search_filter").(string),
+		// SearchScope:            data.Get("search_scope").(string),
 
-		ValidatePasswordPolicy: data.Get("validate_password_policy").(bool),
-		TrustEmail:             data.Get("trust_email").(bool),
-		UseTruststoreSpi:       data.Get("use_truststore_spi").(string),
-		ConnectionTimeout:      data.Get("connection_timeout").(string),
-		ReadTimeout:            data.Get("read_timeout").(string),
-		Pagination:             data.Get("pagination").(bool),
+		// ValidatePasswordPolicy: data.Get("validate_password_policy").(bool),
+		// TrustEmail:             data.Get("trust_email").(bool),
+		// UseTruststoreSpi:       data.Get("use_truststore_spi").(string),
+		// ConnectionTimeout:      data.Get("connection_timeout").(string),
+		// ReadTimeout:            data.Get("read_timeout").(string),
+		// Pagination:             data.Get("pagination").(bool),
 
-		ConnectionPooling: data.Get("connection_pooling").(bool),
+		// ConnectionPooling: data.Get("connection_pooling").(bool),
 
-		BatchSizeForSync:  data.Get("batch_size_for_sync").(int),
-		FullSyncPeriod:    data.Get("full_sync_period").(int),
-		ChangedSyncPeriod: data.Get("changed_sync_period").(int),
+		// BatchSizeForSync:  data.Get("batch_size_for_sync").(int),
+		// FullSyncPeriod:    data.Get("full_sync_period").(int),
+		// ChangedSyncPeriod: data.Get("changed_sync_period").(int),
 	}
 
-	if d, ok := data.GetOk("connection_pooling_authentication"); ok {
-		v := d.(string)
-		component.ConnectionPoolingAuthentication = &v
-	}
-	if d, ok := data.GetOk("connection_pool_debug_level"); ok {
-		v := d.(string)
-		component.ConnectionPoolDebugLevel = &v
-	}
-	if d, ok := data.GetOk("connection_pool_initial_size"); ok {
-		v := d.(int)
-		component.ConnectionPoolInitialSize = &v
-	}
-	if d, ok := data.GetOk("connection_pool_maximum_size"); ok {
-		v := d.(int)
-		component.ConnectionPoolMaximumSize = &v
-	}
-	if d, ok := data.GetOk("connection_pool_preferred_size"); ok {
-		v := d.(int)
-		component.ConnectionPoolPreferredSize = &v
-	}
-	if d, ok := data.GetOk("connection_pool_protocol"); ok {
-		v := d.(string)
-		component.ConnectionPoolProtocol = &v
-	}
-	if d, ok := data.GetOk("connection_pool_timeout"); ok {
-		v := d.(int)
-		component.ConnectionPoolTimeout = &v
-	}
+	// if d, ok := data.GetOk("connection_pooling_authentication"); ok {
+	// 	v := d.(string)
+	// 	component.ConnectionPoolingAuthentication = &v
+	// }
+	// if d, ok := data.GetOk("connection_pool_debug_level"); ok {
+	// 	v := d.(string)
+	// 	component.ConnectionPoolDebugLevel = &v
+	// }
+	// if d, ok := data.GetOk("connection_pool_initial_size"); ok {
+	// 	v := d.(int)
+	// 	component.ConnectionPoolInitialSize = &v
+	// }
+	// if d, ok := data.GetOk("connection_pool_maximum_size"); ok {
+	// 	v := d.(int)
+	// 	component.ConnectionPoolMaximumSize = &v
+	// }
+	// if d, ok := data.GetOk("connection_pool_preferred_size"); ok {
+	// 	v := d.(int)
+	// 	component.ConnectionPoolPreferredSize = &v
+	// }
+	// if d, ok := data.GetOk("connection_pool_protocol"); ok {
+	// 	v := d.(string)
+	// 	component.ConnectionPoolProtocol = &v
+	// }
+	// if d, ok := data.GetOk("connection_pool_timeout"); ok {
+	// 	v := d.(int)
+	// 	component.ConnectionPoolTimeout = &v
+	// }
 
-	if cache, ok := data.GetOk("cache"); ok {
-		cache := cache.([]interface{})
-		cacheData := cache[0].(map[string]interface{})
+	// if cache, ok := data.GetOk("cache"); ok {
+	// 	cache := cache.([]interface{})
+	// 	cacheData := cache[0].(map[string]interface{})
 
-		evictionDay := cacheData["eviction_day"].(int)
-		evictionHour := cacheData["eviction_hour"].(int)
-		evictionMinute := cacheData["eviction_minute"].(int)
+	// 	evictionDay := cacheData["eviction_day"].(int)
+	// 	evictionHour := cacheData["eviction_hour"].(int)
+	// 	evictionMinute := cacheData["eviction_minute"].(int)
 
-		component.MaxLifespan = cacheData["max_lifespan"].(string)
+	// 	component.MaxLifespan = cacheData["max_lifespan"].(string)
 
-		component.EvictionDay = &evictionDay
-		component.EvictionHour = &evictionHour
-		component.EvictionMinute = &evictionMinute
-		component.CachePolicy = cacheData["policy"].(string)
-	}
+	// 	component.EvictionDay = &evictionDay
+	// 	component.EvictionHour = &evictionHour
+	// 	component.EvictionMinute = &evictionMinute
+	// 	component.CachePolicy = cacheData["policy"].(string)
+	// }
 
-	if kerberos, ok := data.GetOk("kerberos"); ok {
-		component.AllowKerberosAuthentication = true
-		kerberosSettingsData := kerberos.(*schema.Set).List()[0]
-		kerberosSettings := kerberosSettingsData.(map[string]interface{})
+	// if kerberos, ok := data.GetOk("kerberos"); ok {
+	// 	component.AllowKerberosAuthentication = true
+	// 	kerberosSettingsData := kerberos.(*schema.Set).List()[0]
+	// 	kerberosSettings := kerberosSettingsData.(map[string]interface{})
 
-		component.KerberosRealm = kerberosSettings["kerberos_realm"].(string)
-		component.ServerPrincipal = kerberosSettings["server_principal"].(string)
-		component.UseKerberosForPasswordAuthentication = kerberosSettings["use_kerberos_for_password_authentication"].(bool)
-		component.KeyTab = kerberosSettings["key_tab"].(string)
-	} else {
-		component.AllowKerberosAuthentication = false
-	}
+	// 	component.KerberosRealm = kerberosSettings["kerberos_realm"].(string)
+	// 	component.ServerPrincipal = kerberosSettings["server_principal"].(string)
+	// 	component.UseKerberosForPasswordAuthentication = kerberosSettings["use_kerberos_for_password_authentication"].(bool)
+	// 	component.KeyTab = kerberosSettings["key_tab"].(string)
+	// } else {
+	// 	component.AllowKerberosAuthentication = false
+	// }
 
 	return component
 }
@@ -357,81 +357,81 @@ func setComponentData(data *schema.ResourceData, ldap *keycloak.Component) {
 	data.SetId(ldap.Id)
 
 	data.Set("name", ldap.Name)
-	data.Set("realm_id", ldap.RealmId)
+	// data.Set("realm_id", ldap.RealmId)
 
-	data.Set("enabled", ldap.Enabled)
-	data.Set("priority", ldap.Priority)
+	// data.Set("enabled", ldap.Enabled)
+	// data.Set("priority", ldap.Priority)
 
-	data.Set("import_enabled", ldap.ImportEnabled)
-	data.Set("edit_mode", ldap.EditMode)
-	data.Set("sync_registrations", ldap.SyncRegistrations)
+	// data.Set("import_enabled", ldap.ImportEnabled)
+	// data.Set("edit_mode", ldap.EditMode)
+	// data.Set("sync_registrations", ldap.SyncRegistrations)
 
-	data.Set("vendor", ldap.Vendor)
-	data.Set("username_ldap_attribute", ldap.UsernameLDAPAttribute)
-	data.Set("rdn_ldap_attribute", ldap.RdnLDAPAttribute)
-	data.Set("uuid_ldap_attribute", ldap.UuidLDAPAttribute)
-	data.Set("user_object_classes", ldap.UserObjectClasses)
-	data.Set("connection_url", ldap.ConnectionUrl)
-	data.Set("users_dn", ldap.UsersDn)
-	data.Set("bind_dn", ldap.BindDn)
-	data.Set("bind_credential", ldap.BindCredential)
-	data.Set("custom_user_search_filter", ldap.CustomUserSearchFilter)
-	data.Set("search_scope", ldap.SearchScope)
+	// data.Set("vendor", ldap.Vendor)
+	// data.Set("username_ldap_attribute", ldap.UsernameLDAPAttribute)
+	// data.Set("rdn_ldap_attribute", ldap.RdnLDAPAttribute)
+	// data.Set("uuid_ldap_attribute", ldap.UuidLDAPAttribute)
+	// data.Set("user_object_classes", ldap.UserObjectClasses)
+	// data.Set("connection_url", ldap.ConnectionUrl)
+	// data.Set("users_dn", ldap.UsersDn)
+	// data.Set("bind_dn", ldap.BindDn)
+	// data.Set("bind_credential", ldap.BindCredential)
+	// data.Set("custom_user_search_filter", ldap.CustomUserSearchFilter)
+	// data.Set("search_scope", ldap.SearchScope)
 
-	data.Set("validate_password_policy", ldap.ValidatePasswordPolicy)
-	data.Set("trust_email", ldap.TrustEmail)
-	data.Set("use_truststore_spi", ldap.UseTruststoreSpi)
-	data.Set("connection_timeout", ldap.ConnectionTimeout)
-	data.Set("read_timeout", ldap.ReadTimeout)
-	data.Set("pagination", ldap.Pagination)
+	// data.Set("validate_password_policy", ldap.ValidatePasswordPolicy)
+	// data.Set("trust_email", ldap.TrustEmail)
+	// data.Set("use_truststore_spi", ldap.UseTruststoreSpi)
+	// data.Set("connection_timeout", ldap.ConnectionTimeout)
+	// data.Set("read_timeout", ldap.ReadTimeout)
+	// data.Set("pagination", ldap.Pagination)
 
-	data.Set("connection_pooling", ldap.ConnectionPooling)
-	data.Set("connection_pooling_authentication", ldap.ConnectionPoolingAuthentication)
-	data.Set("connection_pool_debug_level", ldap.ConnectionPoolDebugLevel)
-	data.Set("connection_pool_initial_size", ldap.ConnectionPoolInitialSize)
-	data.Set("connection_pool_maximum_size", ldap.ConnectionPoolMaximumSize)
-	data.Set("connection_pool_preferred_size", ldap.ConnectionPoolPreferredSize)
-	data.Set("connection_pool_protocol", ldap.ConnectionPoolProtocol)
-	data.Set("connection_pool_timeout", ldap.ConnectionPoolTimeout)
+	// data.Set("connection_pooling", ldap.ConnectionPooling)
+	// data.Set("connection_pooling_authentication", ldap.ConnectionPoolingAuthentication)
+	// data.Set("connection_pool_debug_level", ldap.ConnectionPoolDebugLevel)
+	// data.Set("connection_pool_initial_size", ldap.ConnectionPoolInitialSize)
+	// data.Set("connection_pool_maximum_size", ldap.ConnectionPoolMaximumSize)
+	// data.Set("connection_pool_preferred_size", ldap.ConnectionPoolPreferredSize)
+	// data.Set("connection_pool_protocol", ldap.ConnectionPoolProtocol)
+	// data.Set("connection_pool_timeout", ldap.ConnectionPoolTimeout)
 
-	if ldap.AllowKerberosAuthentication {
-		kerberosSettings := make(map[string]interface{})
+	// if ldap.AllowKerberosAuthentication {
+	// 	kerberosSettings := make(map[string]interface{})
 
-		kerberosSettings["server_principal"] = ldap.ServerPrincipal
-		kerberosSettings["use_kerberos_for_password_authentication"] = ldap.UseKerberosForPasswordAuthentication
-		kerberosSettings["key_tab"] = ldap.KeyTab
-		kerberosSettings["kerberos_realm"] = ldap.KerberosRealm
+	// 	kerberosSettings["server_principal"] = ldap.ServerPrincipal
+	// 	kerberosSettings["use_kerberos_for_password_authentication"] = ldap.UseKerberosForPasswordAuthentication
+	// 	kerberosSettings["key_tab"] = ldap.KeyTab
+	// 	kerberosSettings["kerberos_realm"] = ldap.KerberosRealm
 
-		data.Set("kerberos", []interface{}{kerberosSettings})
-	} else {
-		data.Set("kerberos", nil)
-	}
+	// 	data.Set("kerberos", []interface{}{kerberosSettings})
+	// } else {
+	// 	data.Set("kerberos", nil)
+	// }
 
-	data.Set("batch_size_for_sync", ldap.BatchSizeForSync)
-	data.Set("full_sync_period", ldap.FullSyncPeriod)
-	data.Set("changed_sync_period", ldap.ChangedSyncPeriod)
+	// data.Set("batch_size_for_sync", ldap.BatchSizeForSync)
+	// data.Set("full_sync_period", ldap.FullSyncPeriod)
+	// data.Set("changed_sync_period", ldap.ChangedSyncPeriod)
 
-	if _, ok := data.GetOk("cache"); ok {
-		cachePolicySettings := make(map[string]interface{})
+	// if _, ok := data.GetOk("cache"); ok {
+	// 	cachePolicySettings := make(map[string]interface{})
 
-		if ldap.MaxLifespan != "" {
-			cachePolicySettings["max_lifespan"] = ldap.MaxLifespan
-		}
+	// 	if ldap.MaxLifespan != "" {
+	// 		cachePolicySettings["max_lifespan"] = ldap.MaxLifespan
+	// 	}
 
-		if ldap.EvictionDay != nil {
-			cachePolicySettings["eviction_day"] = *ldap.EvictionDay
-		}
-		if ldap.EvictionHour != nil {
-			cachePolicySettings["eviction_hour"] = *ldap.EvictionHour
-		}
-		if ldap.EvictionMinute != nil {
-			cachePolicySettings["eviction_minute"] = *ldap.EvictionMinute
-		}
+	// 	if ldap.EvictionDay != nil {
+	// 		cachePolicySettings["eviction_day"] = *ldap.EvictionDay
+	// 	}
+	// 	if ldap.EvictionHour != nil {
+	// 		cachePolicySettings["eviction_hour"] = *ldap.EvictionHour
+	// 	}
+	// 	if ldap.EvictionMinute != nil {
+	// 		cachePolicySettings["eviction_minute"] = *ldap.EvictionMinute
+	// 	}
 
-		cachePolicySettings["policy"] = ldap.CachePolicy
+	// 	cachePolicySettings["policy"] = ldap.CachePolicy
 
-		data.Set("cache", []interface{}{cachePolicySettings})
-	}
+	// 	data.Set("cache", []interface{}{cachePolicySettings})
+	// }
 }
 
 func resourceKeycloakComponentCreate(data *schema.ResourceData, meta interface{}) error {

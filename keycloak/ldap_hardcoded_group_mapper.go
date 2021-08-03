@@ -10,8 +10,8 @@ type LdapHardcodedGroupMapper struct {
 	Group                string
 }
 
-func convertFromLdapHardcodedGroupMapperToComponent(ldapMapper *LdapHardcodedGroupMapper) *component {
-	return &component{
+func convertFromLdapHardcodedGroupMapperToComponent(ldapMapper *LdapHardcodedGroupMapper) *Component {
+	return &Component{
 		Id:           ldapMapper.Id,
 		Name:         ldapMapper.Name,
 		ProviderId:   "hardcoded-ldap-group-mapper",
@@ -26,7 +26,7 @@ func convertFromLdapHardcodedGroupMapperToComponent(ldapMapper *LdapHardcodedGro
 	}
 }
 
-func convertFromComponentToLdapHardcodedGroupMapper(component *component, realmId string) *LdapHardcodedGroupMapper {
+func convertFromComponentToLdapHardcodedGroupMapper(component *Component, realmId string) *LdapHardcodedGroupMapper {
 	return &LdapHardcodedGroupMapper{
 		Id:                   component.Id,
 		Name:                 component.Name,
@@ -56,7 +56,7 @@ func (keycloakClient *KeycloakClient) NewLdapHardcodedGroupMapper(ldapMapper *Ld
 }
 
 func (keycloakClient *KeycloakClient) GetLdapHardcodedGroupMapper(realmId, id string) (*LdapHardcodedGroupMapper, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {

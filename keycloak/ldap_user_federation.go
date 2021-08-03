@@ -63,7 +63,7 @@ type LdapUserFederation struct {
 	EvictionMinute *int
 }
 
-func convertFromLdapUserFederationToComponent(ldap *LdapUserFederation) (*component, error) {
+func convertFromLdapUserFederationToComponent(ldap *LdapUserFederation) (*Component, error) {
 	componentConfig := map[string][]string{
 		"cachePolicy": {
 			ldap.CachePolicy,
@@ -240,7 +240,7 @@ func convertFromLdapUserFederationToComponent(ldap *LdapUserFederation) (*compon
 		componentConfig["connectionPoolingTimeout"] = []string{strconv.Itoa(*ldap.ConnectionPoolTimeout)}
 	}
 
-	return &component{
+	return &Component{
 		Id:           ldap.Id,
 		Name:         ldap.Name,
 		ProviderId:   "ldap",
@@ -250,7 +250,7 @@ func convertFromLdapUserFederationToComponent(ldap *LdapUserFederation) (*compon
 	}, nil
 }
 
-func convertFromComponentToLdapUserFederation(component *component) (*LdapUserFederation, error) {
+func convertFromComponentToLdapUserFederation(component *Component) (*LdapUserFederation, error) {
 	enabled, err := parseBoolAndTreatEmptyStringAsFalse(component.getConfig("enabled"))
 	if err != nil {
 		return nil, err
@@ -513,7 +513,7 @@ func (keycloakClient *KeycloakClient) NewLdapUserFederation(ldapUserFederation *
 }
 
 func (keycloakClient *KeycloakClient) GetLdapUserFederation(realmId, id string) (*LdapUserFederation, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {
@@ -524,7 +524,7 @@ func (keycloakClient *KeycloakClient) GetLdapUserFederation(realmId, id string) 
 }
 
 func (keycloakClient *KeycloakClient) GetLdapUserFederationMappers(realmId, id string) (*[]interface{}, error) {
-	var components []*component
+	var components []*Component
 	var ldapUserFederationMappers []interface{}
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components?parent=%s&type=org.keycloak.storage.ldap.mappers.LDAPStorageMapper", realmId, id), &components, nil)
@@ -582,7 +582,7 @@ func (keycloakClient *KeycloakClient) GetLdapUserFederationMappers(realmId, id s
 }
 
 func (keycloakClient *KeycloakClient) DeleteLdapUserFederationMappers(realmId, ldapUserFederationId string) error {
-	var components []*component
+	var components []*Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components?parent=%s&type=org.keycloak.storage.ldap.mappers.LDAPStorageMapper", realmId, ldapUserFederationId), &components, nil)
 	if err != nil {

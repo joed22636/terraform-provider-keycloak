@@ -24,7 +24,7 @@ var (
 	userStorageProviderType = "org.keycloak.storage.UserStorageProvider"
 )
 
-func convertFromCustomUserFederationToComponent(custom *CustomUserFederation) *component {
+func convertFromCustomUserFederationToComponent(custom *CustomUserFederation) *Component {
 	componentConfig := make(map[string][]string)
 
 	if custom.Config != nil {
@@ -39,7 +39,7 @@ func convertFromCustomUserFederationToComponent(custom *CustomUserFederation) *c
 	if custom.ParentId != "" {
 		parentId = custom.ParentId
 	}
-	return &component{
+	return &Component{
 		Id:           custom.Id,
 		Name:         custom.Name,
 		ProviderId:   custom.ProviderId,
@@ -49,7 +49,7 @@ func convertFromCustomUserFederationToComponent(custom *CustomUserFederation) *c
 	}
 }
 
-func convertFromComponentToCustomUserFederation(component *component, realmName string) (*CustomUserFederation, error) {
+func convertFromComponentToCustomUserFederation(component *Component, realmName string) (*CustomUserFederation, error) {
 	enabled, err := strconv.ParseBool(component.getConfig("enabled"))
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (keycloakClient *KeycloakClient) NewCustomUserFederation(customUserFederati
 }
 
 func (keycloakClient *KeycloakClient) GetCustomUserFederation(realmName, id string) (*CustomUserFederation, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmName, id), &component, nil)
 	if err != nil {
@@ -122,7 +122,7 @@ func (keycloakClient *KeycloakClient) GetCustomUserFederation(realmName, id stri
 }
 
 func (keycloakClient *KeycloakClient) GetCustomUserFederations(realmName, realmId string) (*[]CustomUserFederation, error) {
-	var components []*component
+	var components []*Component
 	var customUserFederations []CustomUserFederation
 	var customUserFederation *CustomUserFederation
 

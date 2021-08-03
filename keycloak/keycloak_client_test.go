@@ -90,7 +90,7 @@ func TestAccKeycloakApiClientRefresh(t *testing.T) {
 }
 
 func TestKeycloakApiClientRefresh(t *testing.T) {
-	// t.Skip("just a play around test case - can be removed")
+	t.Skip("just a play around test case - can be removed")
 	cookieJar, err := cookiejar.New(&cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	})

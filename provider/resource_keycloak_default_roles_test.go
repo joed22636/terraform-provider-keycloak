@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	"reflect"
+	"sort"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -71,6 +72,7 @@ func testAccCheckKeycloakDefaultRoles(resourceName string, roles []string) resou
 			return fmt.Errorf("error fetching authentication execution config: %v", err)
 		}
 
+		sort.Strings(bindings.DefaultRoles)
 		if !reflect.DeepEqual(bindings.DefaultRoles, roles) {
 			return fmt.Errorf("Expected default roles: %v, Actual: %v", roles, bindings.DefaultRoles)
 		}

@@ -220,3 +220,22 @@ Result:
 ```
 http://localhost:8080/auth/admin/realms/test/components/5d423be1-300c-48d7-8a7d-9a9bae3b19f1
 ```
+
+## Update 
+
+```
+PUT http://localhost:8080/auth/admin/realms/test/components/8b738c17-0f36-42b5-a5aa-3c64a2527513
+{
+  "id": "8b738c17-0f36-42b5-a5aa-3c64a2527513",
+  "name": "ecdsa-generated",
+  "providerId": "ecdsa-generated",
+  "providerType": "org.keycloak.keys.KeyProvider",
+  "parentId": "test",
+  "config": {
+    "ecdsaEllipticCurveKey": ["P-521"],
+    "active": ["true"],
+    "priority": ["67"],
+    "enabled": ["true"]
+  }
+}
+```

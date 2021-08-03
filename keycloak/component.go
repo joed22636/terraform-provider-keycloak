@@ -47,6 +47,10 @@ func (keycloakClient *KeycloakClient) CreateComponent(realm string, component Co
 	return nil
 }
 
+func (keycloakClient *KeycloakClient) UpdateComponent(realm string, component component) error {
+	return keycloakClient.put(fmt.Sprintf("/realms/%s/components/%s", realm, component.Id), component)
+}
+
 func (keycloakClient *KeycloakClient) DeleteComponent(realmId, id string) error {
 	return keycloakClient.delete(fmt.Sprintf("/realms/%s/components/%s", realmId, id), nil)
 }

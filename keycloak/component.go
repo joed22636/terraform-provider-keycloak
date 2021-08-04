@@ -47,7 +47,7 @@ func (keycloakClient *KeycloakClient) CreateComponent(realm string, component Co
 	return nil
 }
 
-func (keycloakClient *KeycloakClient) UpdateComponent(realm string, component component) error {
+func (keycloakClient *KeycloakClient) UpdateComponent(realm string, component Component) error {
 	return keycloakClient.put(fmt.Sprintf("/realms/%s/components/%s", realm, component.Id), component)
 }
 

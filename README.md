@@ -175,7 +175,21 @@ Result:
 ```
 [
   {
-    "id": "8683faf0-990e-446d-8eca-31fdc3655961",
+    "id": "7383b993-9a7a-41c2-b1b5-9b3fb94621d6",
+    "name": "rsa-generated",
+    "providerId": "rsa-generated",
+    "providerType": "org.keycloak.keys.KeyProvider",
+    "parentId": "test",
+    "config": {
+      "keySize": ["2048"],
+      "active": ["true"],
+      "priority": ["0"],
+      "enabled": ["true"],
+      "algorithm": ["RS256"]
+    }
+  },
+  {
+    "id": "8b738c17-0f36-42b5-a5aa-3c64a2527513",
     "name": "ecdsa-generated",
     "providerId": "ecdsa-generated",
     "providerType": "org.keycloak.keys.KeyProvider",
@@ -183,7 +197,7 @@ Result:
     "config": {
       "ecdsaEllipticCurveKey": ["P-521"],
       "active": ["true"],
-      "priority": ["0"],
+      "priority": ["77"],
       "enabled": ["true"]
     }
   },
@@ -204,14 +218,42 @@ Result:
     "config": { "priority": ["100"] }
   },
   {
+    "id": "af9c5028-dc79-459a-96dd-0a91d245daef",
+    "name": "aes-generated",
+    "providerId": "aes-generated",
+    "providerType": "org.keycloak.keys.KeyProvider",
+    "parentId": "test",
+    "config": {
+      "active": ["true"],
+      "secretSize": ["16"],
+      "priority": ["0"],
+      "enabled": ["true"]
+    }
+  },
+  {
     "id": "efaac684-5c1b-49f8-a987-418f2d726fba",
     "name": "rsa-generated",
     "providerId": "rsa-generated",
     "providerType": "org.keycloak.keys.KeyProvider",
     "parentId": "test",
     "config": { "priority": ["100"] }
+  },
+  {
+    "id": "0b791e23-18cb-4a50-b5dd-d5419b58d899",
+    "name": "hmac-generated",
+    "providerId": "hmac-generated",
+    "providerType": "org.keycloak.keys.KeyProvider",
+    "parentId": "test",
+    "config": {
+      "active": ["true"],
+      "secretSize": ["64"],
+      "priority": ["0"],
+      "enabled": ["true"],
+      "algorithm": ["HS256"]
+    }
   }
 ]
+
 
 ```
 

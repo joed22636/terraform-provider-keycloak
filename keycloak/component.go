@@ -38,6 +38,15 @@ func (keycloakClient *KeycloakClient) GetComponents(realm, parent, providerType 
 	return result, nil
 }
 
+func (keycloakClient *KeycloakClient) GetComponent(realm, id string) (*Component, error) {
+	var result Component
+	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realm, id), &result, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
 func (keycloakClient *KeycloakClient) CreateComponent(realm string, component Component) error {
 	_, _, err := keycloakClient.post(fmt.Sprintf("/realms/%s/components", realm), component)
 	if err != nil {

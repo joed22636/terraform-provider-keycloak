@@ -130,8 +130,10 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 	r, e := keycloakClient.GetComponents("test", "test", "org.keycloak.keys.KeyProvider")
 	log.Println(r, e)
 	r[0].Config["priority"] = []string{"77"}
+	c, e := keycloakClient.GetComponent("test", r[0].Id)
+	log.Println(c, e)
 	e = keycloakClient.UpdateComponent("test", r[0])
 
-	log.Println(r, e)
+	log.Println(r, e, c)
 	log.Println(r[0].Config, e)
 }

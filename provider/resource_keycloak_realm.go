@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/joed22636/terraform-provider-keycloak/keycloak"
@@ -1123,6 +1125,14 @@ func resourceKeycloakRealmCreate(data *schema.ResourceData, meta interface{}) er
 	err = keycloakClient.NewRealm(realm)
 	if err != nil {
 		return err
+	}
+
+	comps, err := keycloakClient.GetComponents(realm.Realm, realm.Realm, "org.keycloak.keys.KeyProvider")
+	if err != nil {
+		return fmt.Errorf("Error while removing hardcoded keyproviders during realm creation. %v", err)
+	}
+	for _, comp := range comps {
+		keycloakClient.DeleteComponent(realm.Realm, comp.Id)
 	}
 
 	setRealmData(data, realm)

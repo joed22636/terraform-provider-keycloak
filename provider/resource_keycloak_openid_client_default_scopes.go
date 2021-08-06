@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/joed22636/terraform-provider-keycloak/keycloak"
@@ -13,6 +14,9 @@ func resourceKeycloakOpenidClientDefaultScopes() *schema.Resource {
 		Read:   resourceKeycloakOpenidClientDefaultScopesRead,
 		Delete: resourceKeycloakOpenidClientDefaultScopesDelete,
 		Update: resourceKeycloakOpenidClientDefaultScopesUpdate,
+		Importer: &schema.ResourceImporter{
+			State: resourceKeycloakOpenidClientDefaultScopesImport,
+		},
 		Schema: map[string]*schema.Schema{
 			"realm_id": {
 				Type:     schema.TypeString,
@@ -125,4 +129,18 @@ func resourceKeycloakOpenidClientDefaultScopesDelete(data *schema.ResourceData, 
 	defaultScopes := data.Get("default_scopes").(*schema.Set)
 
 	return keycloakClient.DetachOpenidClientDefaultScopes(realmId, clientId, interfaceSliceToStringSlice(defaultScopes.List()))
+}
+
+func resourceKeycloakOpenidClientDefaultScopesImport(d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
+	parts := strings.Split(d.Id(), "/")
+
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("Invalid import. Supported import formats: {{realmId}}/{{clientId}}")
+	}
+
+	d.Set("realm_id", parts[0])
+	d.Set("client_id", parts[1])
+	d.SetId(openidClientDefaultScopesId(parts[0], parts[1]))
+
+	return []*schema.ResourceData{d}, nil
 }

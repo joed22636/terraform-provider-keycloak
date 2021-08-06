@@ -259,7 +259,7 @@ func resourceKeycloakLdapUserFederation() *schema.Resource {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Default:      "-1",
-							ValidateFunc: validation.All(validation.IntAtLeast(0), validation.IntAtMost(6)),
+							ValidateFunc: validation.All(validation.IntAtLeast(-1), validation.IntAtMost(6)),
 							Description:  "Day of the week the entry will become invalid on.",
 						},
 						"eviction_hour": {

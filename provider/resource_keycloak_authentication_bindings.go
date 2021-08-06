@@ -148,5 +148,6 @@ func setAuthenticationBindings(data *schema.ResourceData, json *keycloak.Authent
 }
 
 func resourceKeycloakAuthenticationBindingsImport(d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
+	d.Set("realm_id", d.Id())
 	return []*schema.ResourceData{d}, nil
 }

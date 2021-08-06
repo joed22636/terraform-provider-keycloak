@@ -91,7 +91,7 @@ func resourceKeycloakRealm() *schema.Resource {
 		Delete: resourceKeycloakRealmDelete,
 		Update: resourceKeycloakRealmUpdate,
 		Importer: &schema.ResourceImporter{
-			State: resourceKeycloakAuthenticationFlowImport,
+			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
 			"realm": {

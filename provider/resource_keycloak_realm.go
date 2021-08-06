@@ -1039,6 +1039,17 @@ func setRealmData(data *schema.ResourceData, realm *keycloak.Realm) {
 			securityDefensesSettings["brute_force_detection"] = []interface{}{getBruteForceDetectionSettings(realm)}
 			data.Set("security_defenses", []interface{}{securityDefensesSettings})
 		}
+	} else {
+		if realm.BruteForceProtected {
+			securityDefensesSettings := make(map[string]interface{})
+			securityDefensesSettings["headers"] = []interface{}{getHeaderSettings(realm)}
+			securityDefensesSettings["brute_force_detection"] = []interface{}{getBruteForceDetectionSettings(realm)}
+			data.Set("security_defenses", []interface{}{securityDefensesSettings})
+		} else {
+			securityDefensesSettings := make(map[string]interface{})
+			securityDefensesSettings["headers"] = []interface{}{getHeaderSettings(realm)}
+			data.Set("security_defenses", []interface{}{securityDefensesSettings})
+		}
 	}
 
 	data.Set("password_policy", realm.PasswordPolicy)
@@ -1076,6 +1087,10 @@ func setRealmData(data *schema.ResourceData, realm *keycloak.Realm) {
 		for key := range v.(map[string]interface{}) {
 			attributes[key] = realm.Attributes[key]
 			//We are only interested in attributes managed in terraform (Keycloak returns a lot of doubles values in the attributes...)
+		}
+	} else {
+		for k, v := range realm.Attributes {
+			attributes[k] = v
 		}
 	}
 	data.Set("attributes", attributes)

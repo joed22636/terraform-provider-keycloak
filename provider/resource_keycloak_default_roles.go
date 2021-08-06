@@ -116,5 +116,6 @@ func setDefaultRoles(data *schema.ResourceData, json *keycloak.DefaultRoles) {
 }
 
 func resourceKeycloakDefaultRolesImport(d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
+	d.Set("realm_id", d.Id())
 	return []*schema.ResourceData{d}, nil
 }

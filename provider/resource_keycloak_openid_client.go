@@ -357,6 +357,12 @@ func setOpenidClientData(keycloakClient *keycloak.KeycloakClient, data *schema.R
 	data.Set("consent_required", client.ConsentRequired)
 	data.Set("access_token_lifespan", client.Attributes.AccessTokenLifespan)
 	data.Set("login_theme", client.Attributes.LoginTheme)
+	data.Set("client_offline_session_idle_timeout", client.Attributes.ClientOfflineSessionIdleTimeout)
+	data.Set("client_offline_session_max_lifespan", client.Attributes.ClientOfflineSessionMaxLifespan)
+	data.Set("client_session_idle_timeout", client.Attributes.ClientSessionIdleTimeout)
+	data.Set("client_session_max_lifespan", client.Attributes.ClientSessionMaxLifespan)
+	data.Set("exclude_session_state_from_auth_response", client.Attributes.ExcludeSessionStateFromAuthResponse)
+	data.Set("pkce_code_challenge_method", client.Attributes.PkceCodeChallengeMethod)
 
 	if client.AuthorizationServicesEnabled {
 		data.Set("resource_server_id", client.Id)

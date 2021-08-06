@@ -460,25 +460,29 @@ func setLdapUserFederationData(data *schema.ResourceData, ldap *keycloak.LdapUse
 	data.Set("full_sync_period", ldap.FullSyncPeriod)
 	data.Set("changed_sync_period", ldap.ChangedSyncPeriod)
 
-	cachePolicySettings := make(map[string]interface{})
+	if len(ldap.CachePolicy) > 1 {
 
-	if ldap.MaxLifespan != "" {
-		cachePolicySettings["max_lifespan"] = ldap.MaxLifespan
-	}
+		cachePolicySettings := make(map[string]interface{})
 
-	if ldap.EvictionDay != nil {
-		cachePolicySettings["eviction_day"] = *ldap.EvictionDay
-	}
-	if ldap.EvictionHour != nil {
-		cachePolicySettings["eviction_hour"] = *ldap.EvictionHour
-	}
-	if ldap.EvictionMinute != nil {
-		cachePolicySettings["eviction_minute"] = *ldap.EvictionMinute
-	}
+		if ldap.MaxLifespan != "" {
+			cachePolicySettings["max_lifespan"] = ldap.MaxLifespan
+		}
 
-	cachePolicySettings["policy"] = ldap.CachePolicy
+		if ldap.EvictionDay != nil {
+			cachePolicySettings["eviction_day"] = *ldap.EvictionDay
+		}
+		if ldap.EvictionHour != nil {
+			cachePolicySettings["eviction_hour"] = *ldap.EvictionHour
+		}
+		if ldap.EvictionMinute != nil {
+			cachePolicySettings["eviction_minute"] = *ldap.EvictionMinute
+		}
 
-	data.Set("cache", []interface{}{cachePolicySettings})
+		cachePolicySettings["policy"] = ldap.CachePolicy
+
+		data.Set("cache", []interface{}{cachePolicySettings})
+
+	}
 }
 
 func resourceKeycloakLdapUserFederationCreate(data *schema.ResourceData, meta interface{}) error {

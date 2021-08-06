@@ -777,8 +777,6 @@ func getRealmFromData(data *schema.ResourceData) (*keycloak.Realm, error) {
 				XRobotsTag:                      headerSettings["x_robots_tag"].(string),
 				XXSSProtection:                  headerSettings["x_xss_protection"].(string),
 			}
-		} else {
-			setDefaultSecuritySettingHeaders(realm)
 		}
 
 		bruteForceDetectionConfig := securityDefensesSettings["brute_force_detection"].([]interface{})
@@ -792,12 +790,7 @@ func getRealmFromData(data *schema.ResourceData) (*keycloak.Realm, error) {
 			realm.MinimumQuickLoginWaitSeconds = bruteForceDetectionSettings["minimum_quick_login_wait_seconds"].(int)
 			realm.MaxFailureWaitSeconds = bruteForceDetectionSettings["max_failure_wait_seconds"].(int)
 			realm.MaxDeltaTimeSeconds = bruteForceDetectionSettings["failure_reset_time_seconds"].(int)
-		} else {
-			setDefaultSecuritySettingsBruteForceDetection(realm)
 		}
-	} else {
-		setDefaultSecuritySettingHeaders(realm)
-		setDefaultSecuritySettingsBruteForceDetection(realm)
 	}
 
 	if passwordPolicy, ok := data.GetOk("password_policy"); ok {
@@ -913,29 +906,6 @@ func getRealmFromData(data *schema.ResourceData) (*keycloak.Realm, error) {
 	return realm, nil
 }
 
-func setDefaultSecuritySettingHeaders(realm *keycloak.Realm) {
-	realm.BrowserSecurityHeaders = keycloak.BrowserSecurityHeaders{
-		ContentSecurityPolicy:           "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
-		ContentSecurityPolicyReportOnly: "",
-		StrictTransportSecurity:         "max-age=31536000; includeSubDomains",
-		XContentTypeOptions:             "nosniff",
-		XFrameOptions:                   "SAMEORIGIN",
-		XRobotsTag:                      "none",
-		XXSSProtection:                  "1; mode=block",
-	}
-}
-
-func setDefaultSecuritySettingsBruteForceDetection(realm *keycloak.Realm) {
-	realm.BruteForceProtected = false
-	realm.PermanentLockout = false
-	realm.FailureFactor = 30
-	realm.WaitIncrementSeconds = 60
-	realm.QuickLoginCheckMilliSeconds = 1000
-	realm.MinimumQuickLoginWaitSeconds = 60
-	realm.MaxFailureWaitSeconds = 900
-	realm.MaxDeltaTimeSeconds = 43200
-}
-
 func setRealmData(data *schema.ResourceData, realm *keycloak.Realm) {
 	data.SetId(realm.Realm)
 
@@ -1047,8 +1017,13 @@ func setRealmData(data *schema.ResourceData, realm *keycloak.Realm) {
 			data.Set("security_defenses", []interface{}{securityDefensesSettings})
 		} else {
 			securityDefensesSettings := make(map[string]interface{})
-			securityDefensesSettings["headers"] = []interface{}{getHeaderSettings(realm)}
-			data.Set("security_defenses", []interface{}{securityDefensesSettings})
+			headerSettings := getHeaderSettings(realm)
+			if len(headerSettings) > 1 {
+				securityDefensesSettings["headers"] = []interface{}{headerSettings}
+			}
+			if len(securityDefensesSettings) > 1 {
+				data.Set("security_defenses", []interface{}{securityDefensesSettings})
+			}
 		}
 	}
 

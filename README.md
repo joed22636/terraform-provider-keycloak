@@ -100,7 +100,7 @@ go test -v -run TestAccKeycloakUsersPermission_basic ./provider
 ## TODO
 
 * credential handling 
-  * smtp
+  * smtp (not yet needed)
   * ldap
   * idp 
 *  webUI > roles > default roles (realm)

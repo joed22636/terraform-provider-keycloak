@@ -438,7 +438,7 @@ func TestAccKeycloakRealm_securityDefensesHeaders(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testKeycloakRealm_basic(realmName, realmDisplayName, realmDisplayNameHtml),
-				Check:  testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", "SAMEORIGIN"),
+				Check:  testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", ""),
 			},
 			{
 				Config: testKeycloakRealm_securityDefensesHeaders(realmName, realmDisplayName, "SAMEORIGIN"),
@@ -450,7 +450,7 @@ func TestAccKeycloakRealm_securityDefensesHeaders(t *testing.T) {
 			},
 			{
 				Config: testKeycloakRealm_basic(realmName, realmDisplayName, realmDisplayNameHtml),
-				Check:  testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", "SAMEORIGIN"),
+				Check:  testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", ""),
 			},
 		},
 	})
@@ -470,7 +470,7 @@ func TestAccKeycloakRealm_securityDefensesBruteForceDetection(t *testing.T) {
 				Config: testKeycloakRealm_basic(realmName, realmDisplayName, realmDisplayNameHtml),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetection("keycloak_realm.realm", false),
-					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 30),
+					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 0),
 				),
 			},
 			{
@@ -484,7 +484,7 @@ func TestAccKeycloakRealm_securityDefensesBruteForceDetection(t *testing.T) {
 				Config: testKeycloakRealm_basic(realmName, realmDisplayName, realmDisplayNameHtml),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetection("keycloak_realm.realm", false),
-					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 30),
+					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 0),
 				),
 			},
 		},
@@ -504,9 +504,9 @@ func TestAccKeycloakRealm_securityDefenses(t *testing.T) {
 			{
 				Config: testKeycloakRealm_basic(realmName, realmDisplayName, realmDisplayNameHtml),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", "SAMEORIGIN"),
+					testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", ""),
 					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetection("keycloak_realm.realm", false),
-					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 30),
+					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 0),
 				),
 			},
 			{
@@ -522,13 +522,13 @@ func TestAccKeycloakRealm_securityDefenses(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", "SAMEORIGIN"),
 					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetection("keycloak_realm.realm", false),
-					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 30),
+					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 0),
 				),
 			},
 			{
 				Config: testKeycloakRealm_securityDefensesBruteForceDetection(realmName, realmDisplayName, 31),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", "SAMEORIGIN"),
+					testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", ""),
 					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetection("keycloak_realm.realm", true),
 					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 31),
 				),
@@ -544,9 +544,9 @@ func TestAccKeycloakRealm_securityDefenses(t *testing.T) {
 			{
 				Config: testKeycloakRealm_basic(realmName, realmDisplayName, realmDisplayNameHtml),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", "SAMEORIGIN"),
+					testAccCheckKeycloakRealmSecurityDefensesHeaders("keycloak_realm.realm", ""),
 					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetection("keycloak_realm.realm", false),
-					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 30),
+					testAccCheckKeycloakRealmSecurityDefensesBruteForceDetectionFailureFactor("keycloak_realm.realm", 0),
 				),
 			},
 		},

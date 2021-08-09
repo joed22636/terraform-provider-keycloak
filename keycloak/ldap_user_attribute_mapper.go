@@ -18,8 +18,8 @@ type LdapUserAttributeMapper struct {
 	UserModelAttribute      string
 }
 
-func convertFromLdapUserAttributeMapperToComponent(ldapUserAttributeMapper *LdapUserAttributeMapper) *component {
-	return &component{
+func convertFromLdapUserAttributeMapperToComponent(ldapUserAttributeMapper *LdapUserAttributeMapper) *Component {
+	return &Component{
 		Id:           ldapUserAttributeMapper.Id,
 		Name:         ldapUserAttributeMapper.Name,
 		ProviderId:   "user-attribute-ldap-mapper",
@@ -45,7 +45,7 @@ func convertFromLdapUserAttributeMapperToComponent(ldapUserAttributeMapper *Ldap
 	}
 }
 
-func convertFromComponentToLdapUserAttributeMapper(component *component, realmId string) (*LdapUserAttributeMapper, error) {
+func convertFromComponentToLdapUserAttributeMapper(component *Component, realmId string) (*LdapUserAttributeMapper, error) {
 	isMandatoryInLdap, err := parseBoolAndTreatEmptyStringAsFalse(component.getConfig("is.mandatory.in.ldap"))
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (keycloakClient *KeycloakClient) NewLdapUserAttributeMapper(ldapUserAttribu
 }
 
 func (keycloakClient *KeycloakClient) GetLdapUserAttributeMapper(realmId, id string) (*LdapUserAttributeMapper, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {

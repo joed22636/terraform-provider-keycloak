@@ -11,6 +11,10 @@ func resourceKeycloakRealmEvents() *schema.Resource {
 		Read:   resourceKeycloakRealmEventsRead,
 		Delete: resourceKeycloakRealmEventsDelete,
 		Update: resourceKeycloakRealmEventsUpdate,
+		Importer: &schema.ResourceImporter{
+			State: resourceKeycloakRealmEventsImport,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"realm_id": {
 				Type:     schema.TypeString,
@@ -149,4 +153,9 @@ func resourceKeycloakRealmEventsUpdate(data *schema.ResourceData, meta interface
 	setRealmEventsConfigData(data, realmEventsConfig)
 
 	return nil
+}
+
+func resourceKeycloakRealmEventsImport(d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
+	d.Set("realm_id", d.Id())
+	return []*schema.ResourceData{d}, nil
 }

@@ -58,6 +58,8 @@ brew install terraform@0.13
 
 ## Tests
 
+use keycloak/keycloak_client_test.go to debug http rest apis
+
 Every resource supported by this provider will have a reasonable amount of acceptance test coverage.
 
 ```
@@ -88,19 +90,19 @@ Result strings:
 --- FAIL
 ```
 
-Run specific test from CLI:
+Run specific test from CLI, e.g.:
 ```
+export TF_LOG=DEBUG                                                                    
 go test -v -run <name> <package>
 go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./provider
+go test -v -run TestAccKeycloakUsersPermission_basic ./provider
 ```
 ## TODO
 
 * credential handling 
-  * smtp
+  * smtp (not yet needed)
   * ldap
   * idp 
-*  webUI > roles > default roles
-* [not yet needed] - webUI > realm > keys  -- key providers
 * [not yet needed] - webUI > client scope > [select one] > scope > realm/client role mappings are not managable afais
 * [not yet needed] - idp > some items (allowedClockSkew,forwardParameters,prompt selection)
 * [not yet needed] - webUI > realm > token > some settings (ssoSessionIdleTimeoutRememberMe, ssoSessionMaxLifespanRememberMe)
@@ -113,18 +115,20 @@ go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./p
 * cicleci reference in readme - badge - CI build
 * built in flow property is not kept
 
-## Branch notes
-
-use keycloak/keycloak_client_test.go to debug http rest apis
-
 ## Extend - classes - architecture
 
 see bindings resource, connection pooling
 
 ### HTTP API - json model
- JSON conversion and API CRUD methods
+ JSON model and API CRUD methods, package: keycloak
+  
+ HTTP response <--> JSON model
+ file: e.g. authentication_bindings.go
 
 ### Terraform model 
+Terraform schema model and CRUD methods, starts with , package: provider
+TF scheme  <--> JSON model
+file: resource_*, e.g. resource_keycloak_authentication_bindings.go
 
 # License
 

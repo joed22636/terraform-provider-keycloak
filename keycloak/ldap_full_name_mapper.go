@@ -16,8 +16,8 @@ type LdapFullNameMapper struct {
 	WriteOnly             bool
 }
 
-func convertFromLdapFullNameMapperToComponent(ldapFullNameMapper *LdapFullNameMapper) *component {
-	return &component{
+func convertFromLdapFullNameMapperToComponent(ldapFullNameMapper *LdapFullNameMapper) *Component {
+	return &Component{
 		Id:           ldapFullNameMapper.Id,
 		Name:         ldapFullNameMapper.Name,
 		ProviderId:   "full-name-ldap-mapper",
@@ -37,7 +37,7 @@ func convertFromLdapFullNameMapperToComponent(ldapFullNameMapper *LdapFullNameMa
 	}
 }
 
-func convertFromComponentToLdapFullNameMapper(component *component, realmId string) (*LdapFullNameMapper, error) {
+func convertFromComponentToLdapFullNameMapper(component *Component, realmId string) (*LdapFullNameMapper, error) {
 	readOnly, err := parseBoolAndTreatEmptyStringAsFalse(component.getConfig("read.only"))
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (keycloakClient *KeycloakClient) NewLdapFullNameMapper(ldapFullNameMapper *
 }
 
 func (keycloakClient *KeycloakClient) GetLdapFullNameMapper(realmId, id string) (*LdapFullNameMapper, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {

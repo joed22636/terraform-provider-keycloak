@@ -56,7 +56,7 @@ func suppressDurationStringDiff(_, old, new string, _ *schema.ResourceData) bool
 
 func handleNotFoundError(err error, data *schema.ResourceData) error {
 	if keycloak.ErrorIs404(err) {
-		log.Printf("[WARN] Removing resource with id %s from state as it no longer exists", data.Id())
+		log.Printf("[WARN] Removing resource with id %s from state as it no longer exists", data.Id()) // TODO: error message is misleading, it shoudl be more general, not just removal related
 		data.SetId("")
 
 		return nil

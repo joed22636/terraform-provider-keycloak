@@ -10,8 +10,8 @@ type LdapHardcodedRoleMapper struct {
 	Role                 string
 }
 
-func convertFromLdapHardcodedRoleMapperToComponent(ldapMapper *LdapHardcodedRoleMapper) *component {
-	return &component{
+func convertFromLdapHardcodedRoleMapperToComponent(ldapMapper *LdapHardcodedRoleMapper) *Component {
+	return &Component{
 		Id:           ldapMapper.Id,
 		Name:         ldapMapper.Name,
 		ProviderId:   "hardcoded-ldap-role-mapper",
@@ -26,7 +26,7 @@ func convertFromLdapHardcodedRoleMapperToComponent(ldapMapper *LdapHardcodedRole
 	}
 }
 
-func convertFromComponentToLdapHardcodedRoleMapper(component *component, realmId string) *LdapHardcodedRoleMapper {
+func convertFromComponentToLdapHardcodedRoleMapper(component *Component, realmId string) *LdapHardcodedRoleMapper {
 	return &LdapHardcodedRoleMapper{
 		Id:                   component.Id,
 		Name:                 component.Name,
@@ -56,7 +56,7 @@ func (keycloakClient *KeycloakClient) NewLdapHardcodedRoleMapper(ldapMapper *Lda
 }
 
 func (keycloakClient *KeycloakClient) GetLdapHardcodedRoleMapper(realmId, id string) (*LdapHardcodedRoleMapper, error) {
-	var component *component
+	var component *Component
 
 	err := keycloakClient.get(fmt.Sprintf("/realms/%s/components/%s", realmId, id), &component, nil)
 	if err != nil {

@@ -259,7 +259,7 @@ func resourceKeycloakLdapUserFederation() *schema.Resource {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Default:      "-1",
-							ValidateFunc: validation.All(validation.IntAtLeast(0), validation.IntAtMost(6)),
+							ValidateFunc: validation.All(validation.IntAtLeast(-1), validation.IntAtMost(6)),
 							Description:  "Day of the week the entry will become invalid on.",
 						},
 						"eviction_hour": {
@@ -460,7 +460,8 @@ func setLdapUserFederationData(data *schema.ResourceData, ldap *keycloak.LdapUse
 	data.Set("full_sync_period", ldap.FullSyncPeriod)
 	data.Set("changed_sync_period", ldap.ChangedSyncPeriod)
 
-	if _, ok := data.GetOk("cache"); ok {
+	if len(ldap.CachePolicy) > 1 {
+
 		cachePolicySettings := make(map[string]interface{})
 
 		if ldap.MaxLifespan != "" {
@@ -480,6 +481,7 @@ func setLdapUserFederationData(data *schema.ResourceData, ldap *keycloak.LdapUse
 		cachePolicySettings["policy"] = ldap.CachePolicy
 
 		data.Set("cache", []interface{}{cachePolicySettings})
+
 	}
 }
 

@@ -90,7 +90,7 @@ func TestAccKeycloakApiClientRefresh(t *testing.T) {
 }
 
 func TestKeycloakApiClientRefresh(t *testing.T) {
-	// t.Skip("just a play around test case - can be removed")
+	t.Skip("just a play around test case - can be removed")
 	cookieJar, err := cookiejar.New(&cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	})
@@ -127,8 +127,13 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		additionalHeaders: nil,
 	}
 
-	ldapId := "74f85131-fd7f-4f94-851b-0e849f2508e5"
-	e := keycloakClient.DeleteLdapUserFederationMappers("test", ldapId)
+	r, e := keycloakClient.GetComponents("test", "test", "org.keycloak.keys.KeyProvider")
+	log.Println(r, e)
+	r[0].Config["priority"] = []string{"77"}
+	c, e := keycloakClient.GetComponent("test", r[0].Id)
+	log.Println(c, e)
+	e = keycloakClient.UpdateComponent("test", r[0])
 
-	log.Println(e)
+	log.Println(r, e, c)
+	log.Println(r[0].Config, e)
 }

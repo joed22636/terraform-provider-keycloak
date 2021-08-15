@@ -3,6 +3,7 @@ package keycloak
 import (
 	"errors"
 	"fmt"
+	"log"
 )
 
 type AuthenticationSubFlow struct {
@@ -115,6 +116,13 @@ func (keycloakClient *KeycloakClient) UpdateAuthenticationSubFlow(authentication
 }
 
 func (keycloakClient *KeycloakClient) DeleteAuthenticationSubFlow(realmId, parentFlowAlias, id string) error {
+	flow, err := keycloakClient.GetAuthenticationFlowFromAlias(realmId, parentFlowAlias)
+	if err == nil && flow.BuiltIn {
+		log.Println("Disable built in flow", flow.Alias)
+		flow.BuiltIn = false
+		keycloakClient.UpdateAuthenticationFlow(flow)
+	}
+
 	authenticationSubFlow := AuthenticationSubFlow{
 		Id:              id,
 		ParentFlowAlias: parentFlowAlias,
@@ -124,7 +132,6 @@ func (keycloakClient *KeycloakClient) DeleteAuthenticationSubFlow(realmId, paren
 	if err != nil {
 		return err
 	}
-
 	return keycloakClient.DeleteAuthenticationExecution(authenticationSubFlow.RealmId, executionId)
 }
 

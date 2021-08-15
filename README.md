@@ -103,6 +103,11 @@ go test -v -run TestAccKeycloakUsersPermission_basic ./provider
   * smtp (not yet needed)
   * ldap
   * idp 
+* import of master realm security defenses does not work
+* import of enabled event types does not work
+* import missing
+    client scope - include in token flag
+    bearer only - standard flow enabled is set to true at import 
 * [not yet needed] - webUI > client scope > [select one] > scope > realm/client role mappings are not managable afais
 * [not yet needed] - idp > some items (allowedClockSkew,forwardParameters,prompt selection)
 * [not yet needed] - webUI > realm > token > some settings (ssoSessionIdleTimeoutRememberMe, ssoSessionMaxLifespanRememberMe)

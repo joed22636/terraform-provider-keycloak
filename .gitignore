@@ -31,4 +31,4 @@ site/
 .DS_Store
 e2e-test/.terraform.lock.hcl
 testacc.log
-providers/registry.terraform.io/joed22636/keycloak/1.0.3/darwin_amd64/terraform-provider-keycloak_v1.0.3
+providers/registry.terraform.io/joed22636/keycloak/1.0.3/darwin_amd64/terraform-provider-keycloak_*

@@ -23,8 +23,8 @@ services:
     - postgres
     - openldap
     environment:
-    - KEYCLOAK_USER=keycloak
-    - KEYCLOAK_PASSWORD=password
+    - KEYCLOAK_USER=admin
+    - KEYCLOAK_PASSWORD=admin
     - KEYCLOAK_LOGLEVEL=INFO
     - DB_VENDOR=POSTGRES
     - DB_ADDR=postgres

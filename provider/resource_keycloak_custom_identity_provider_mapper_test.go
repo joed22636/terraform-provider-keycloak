@@ -130,9 +130,9 @@ func TestAccKeycloakCustomIdentityProviderMapper_basicUpdateAll(t *testing.T) {
 		IdentityProviderAlias:  identityProviderAliasName,
 		IdentityProviderMapper: identityProviderMapper,
 		Name:                   acctest.RandString(10),
-		Config: &keycloak.IdentityProviderMapperConfig{
-			UserAttribute: acctest.RandString(10),
-			Attribute:     acctest.RandString(10),
+		Config: map[string]interface{}{
+			"UserAttribute": acctest.RandString(10),
+			"Attribute":     acctest.RandString(10),
 		},
 	}
 
@@ -141,9 +141,9 @@ func TestAccKeycloakCustomIdentityProviderMapper_basicUpdateAll(t *testing.T) {
 		IdentityProviderAlias:  identityProviderAliasName,
 		IdentityProviderMapper: identityProviderMapper,
 		Name:                   acctest.RandString(10),
-		Config: &keycloak.IdentityProviderMapperConfig{
-			UserAttribute: acctest.RandString(10),
-			Attribute:     acctest.RandString(10),
+		Config: map[string]interface{}{
+			"UserAttribute": acctest.RandString(10),
+			"Attribute":     acctest.RandString(10),
 		},
 	}
 
@@ -309,5 +309,5 @@ resource keycloak_custom_identity_provider_mapper saml {
 		UserAttribute = "%s"
 	}
 }
-	`, testAccRealm.Realm, mapper.IdentityProviderAlias, mapper.Name, mapper.IdentityProviderMapper, mapper.Config.Attribute, mapper.Config.UserAttribute)
+	`, testAccRealm.Realm, mapper.IdentityProviderAlias, mapper.Name, mapper.IdentityProviderMapper, mapper.Config["Attribute"], mapper.Config["UserAttribute"])
 }

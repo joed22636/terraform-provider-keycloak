@@ -43,15 +43,13 @@ func getCustomIdentityProviderMapperFromData(data *schema.ResourceData, meta int
 	} else {
 		rec.IdentityProviderMapper = identityProviderMapper
 	}
-	rec.Config = &keycloak.IdentityProviderMapperConfig{
-		ExtraConfig: extraConfig,
-	}
+	rec.Config = extraConfig
 	return rec, nil
 }
 
 func setCustomIdentityProviderMapperData(data *schema.ResourceData, identityProviderMapper *keycloak.IdentityProviderMapper) error {
 	setIdentityProviderMapperData(data, identityProviderMapper)
 	data.Set("identity_provider_mapper", identityProviderMapper.IdentityProviderMapper)
-	data.Set("extra_config", identityProviderMapper.Config.ExtraConfig)
+	data.Set("extra_config", identityProviderMapper.Config)
 	return nil
 }

@@ -107,8 +107,8 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		Jar:       cookieJar,
 	}
 
-	username := "keycloak"
-	password := "password"
+	username := "admin"
+	password := "admin"
 	clientCredentials := &ClientCredentials{
 		ClientId:     "admin-cli",
 		ClientSecret: "",
@@ -127,13 +127,7 @@ func TestKeycloakApiClientRefresh(t *testing.T) {
 		additionalHeaders: nil,
 	}
 
-	r, e := keycloakClient.GetComponents("test", "test", "org.keycloak.keys.KeyProvider")
+	r, e := keycloakClient.GetIdentityProviderMapper("test", "oidc", "7718c4d0-5c6b-4b1b-9a83-fb40aa2746a6")
 	log.Println(r, e)
-	r[0].Config["priority"] = []string{"77"}
-	c, e := keycloakClient.GetComponent("test", r[0].Id)
-	log.Println(c, e)
-	e = keycloakClient.UpdateComponent("test", r[0])
-
-	log.Println(r, e, c)
-	log.Println(r[0].Config, e)
+	keycloakClient.UpdateIdentityProviderMapper(r)
 }

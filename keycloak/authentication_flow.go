@@ -3,6 +3,7 @@ package keycloak
 import (
 	"errors"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -107,7 +108,30 @@ func (keycloakClient *KeycloakClient) UpdateAuthenticationFlow(authenticationFlo
 }
 
 func (keycloakClient *KeycloakClient) DeleteAuthenticationFlow(realmId, id string) error {
-	err := keycloakClient.delete(fmt.Sprintf("/realms/%s/authentication/flows/%s", realmId, id), nil)
+
+	flow, err := keycloakClient.GetAuthenticationFlow(realmId, id)
+	if err == nil && flow.BuiltIn {
+		log.Println("Disable built in flow", flow.Alias)
+		flow.BuiltIn = false
+		keycloakClient.UpdateAuthenticationFlow(flow)
+	}
+
+	/// it may not be a good idea to provide this error:
+	// realm, err := keycloakClient.GetRealm(realmId)
+	// if err != nil {
+	// 	return err
+	// }
+	// if realm.BrowserFlow == flow.Alias ||
+	// 	realm.ClientAuthenticationFlow == flow.Alias ||
+	// 	realm.DirectGrantFlow == flow.Alias ||
+	// 	realm.DockerAuthenticationFlow == flow.Alias ||
+	// 	realm.RegistrationFlow == flow.Alias ||
+	// 	realm.ResetCredentialsFlow == flow.Alias {
+
+	// 	return fmt.Errorf("%v is used as a default flow", flow.Alias)
+	// }
+
+	err = keycloakClient.delete(fmt.Sprintf("/realms/%s/authentication/flows/%s", realmId, id), nil)
 	if err != nil {
 		// For whatever reason, this fails sometimes with a 500 during acceptance tests. try again
 		return keycloakClient.delete(fmt.Sprintf("/realms/%s/authentication/flows/%s", realmId, id), nil)

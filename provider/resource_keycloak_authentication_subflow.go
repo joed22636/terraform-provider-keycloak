@@ -45,6 +45,11 @@ func resourceKeycloakAuthenticationSubFlow() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"built_in": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 
 			//execution parts of the subflow
 			"authenticator": {
@@ -70,6 +75,7 @@ func mapFromDataToAuthenticationSubFlow(data *schema.ResourceData) *keycloak.Aut
 		ParentFlowAlias: data.Get("parent_flow_alias").(string),
 		Alias:           data.Get("alias").(string),
 		ProviderId:      data.Get("provider_id").(string),
+		BuiltIn:         data.Get("built_in").(bool),
 		Description:     data.Get("description").(string),
 		Authenticator:   data.Get("authenticator").(string),
 		Requirement:     data.Get("requirement").(string),
@@ -87,6 +93,7 @@ func mapFromAuthenticationSubFlowToData(data *schema.ResourceData, authenticatio
 	data.Set("description", authenticationSubFlow.Description)
 	data.Set("authenticator", authenticationSubFlow.Authenticator)
 	data.Set("requirement", authenticationSubFlow.Requirement)
+	data.Set("built_in", authenticationSubFlow.BuiltIn)
 }
 
 func resourceKeycloakAuthenticationSubFlowCreate(data *schema.ResourceData, meta interface{}) error {

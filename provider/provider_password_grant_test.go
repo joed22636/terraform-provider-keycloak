@@ -1,18 +1,19 @@
 package provider
 
 import (
+	"os"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"os"
-	"testing"
 )
 
 func TestAccKeycloakProvider_passwordGrant(t *testing.T) {
 	skipIfEnvNotSet(t, "KEYCLOAK_TEST_PASSWORD_GRANT")
 
-	os.Setenv("KEYCLOAK_USER", "keycloak")
-	os.Setenv("KEYCLOAK_PASSWORD", "password")
+	os.Setenv("KEYCLOAK_USER", "admin")
+	os.Setenv("KEYCLOAK_PASSWORD", "admin")
 
 	defer func() {
 		os.Unsetenv("KEYCLOAK_USER")

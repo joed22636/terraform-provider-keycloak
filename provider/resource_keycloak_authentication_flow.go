@@ -30,6 +30,11 @@ func resourceKeycloakAuthenticationFlow() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"built_in": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 			"provider_id": {
 				Type:         schema.TypeString,
 				Default:      "basic-flow",
@@ -51,6 +56,7 @@ func mapFromDataToAuthenticationFlow(data *schema.ResourceData) *keycloak.Authen
 		Alias:       data.Get("alias").(string),
 		ProviderId:  data.Get("provider_id").(string),
 		Description: data.Get("description").(string),
+		BuiltIn:     data.Get("built_in").(bool),
 	}
 
 	return authenticationFlow
@@ -62,6 +68,7 @@ func mapFromAuthenticationFlowToData(data *schema.ResourceData, authenticationFl
 	data.Set("alias", authenticationFlow.Alias)
 	data.Set("provider_id", authenticationFlow.ProviderId)
 	data.Set("description", authenticationFlow.Description)
+	data.Set("built_in", authenticationFlow.BuiltIn)
 }
 
 func mapFromAuthenticationFlowInfoToData(data *schema.ResourceData, authenticationFlow *keycloak.AuthenticationFlow) {

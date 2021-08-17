@@ -3,6 +3,7 @@ package keycloak
 import (
 	"errors"
 	"fmt"
+	"log"
 )
 
 type AuthenticationSubFlow struct {
@@ -12,7 +13,7 @@ type AuthenticationSubFlow struct {
 	ParentFlowAlias string `json:"-"`
 	ProviderId      string `json:"providerId"` // "basic-flow" or "client-flow" or form-flow see /keycloak/server-spi/src/main/java/org/keycloak/models/AuthenticationFlowModel.java
 	TopLevel        bool   `json:"topLevel"`   // should only be false if this is a subflow
-	BuiltIn         bool   `json:"builtIn"`    // this controls whether or not this flow can be edited from the console. it can be updated, but this provider will only set it to `true`
+	BuiltIn         bool   `json:"builtIn"`    // this controls whether or not this flow can be edited from the console.
 	Description     string `json:"description"`
 	//execution part
 	Authenticator string `json:"-"` //can be any authenticator see /auth/admin/master/console/#/server-info/providers (not limited to the authenticator spi section) for example could also be part of the form-action spi
@@ -115,6 +116,13 @@ func (keycloakClient *KeycloakClient) UpdateAuthenticationSubFlow(authentication
 }
 
 func (keycloakClient *KeycloakClient) DeleteAuthenticationSubFlow(realmId, parentFlowAlias, id string) error {
+	flow, err := keycloakClient.GetAuthenticationFlowFromAlias(realmId, parentFlowAlias)
+	if err == nil && flow.BuiltIn {
+		log.Println("Disable built in flow", flow.Alias)
+		flow.BuiltIn = false
+		keycloakClient.UpdateAuthenticationFlow(flow)
+	}
+
 	authenticationSubFlow := AuthenticationSubFlow{
 		Id:              id,
 		ParentFlowAlias: parentFlowAlias,
@@ -124,7 +132,6 @@ func (keycloakClient *KeycloakClient) DeleteAuthenticationSubFlow(realmId, paren
 	if err != nil {
 		return err
 	}
-
 	return keycloakClient.DeleteAuthenticationExecution(authenticationSubFlow.RealmId, executionId)
 }
 

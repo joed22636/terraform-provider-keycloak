@@ -2,6 +2,7 @@ package keycloak
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -161,8 +162,23 @@ func (keycloakClient *KeycloakClient) UpdateAuthenticationExecutionRequirement(e
 	return keycloakClient.put(fmt.Sprintf("/realms/%s/authentication/flows/%s/executions", executionRequirementUpdate.RealmId, executionRequirementUpdate.ParentFlowAlias), executionRequirementUpdate)
 }
 
+func (keycloakClient *KeycloakClient) disableBuiltInPropertyInParentFlow(realmId, flowId string) {
+	flow, err := keycloakClient.GetAuthenticationFlow(realmId, flowId)
+	if err == nil && flow.BuiltIn {
+		flow.BuiltIn = false
+		err = keycloakClient.UpdateAuthenticationFlow(flow)
+		if err == nil {
+			log.Println("Disable built in flow", flow.Alias)
+		}
+	}
+}
+
 func (keycloakClient *KeycloakClient) DeleteAuthenticationExecution(realmId, id string) error {
-	err := keycloakClient.delete(fmt.Sprintf("/realms/%s/authentication/executions/%s", realmId, id), nil)
+	exe, err := keycloakClient.GetAuthenticationExecution(realmId, "invalid-parent-flow-alias", id)
+	if err == nil {
+		keycloakClient.disableBuiltInPropertyInParentFlow(realmId, exe.ParentFlowId)
+	}
+	err = keycloakClient.delete(fmt.Sprintf("/realms/%s/authentication/executions/%s", realmId, id), nil)
 	if err != nil {
 		// For whatever reason, this fails sometimes with a 500 during acceptance tests. try again
 		return keycloakClient.delete(fmt.Sprintf("/realms/%s/authentication/executions/%s", realmId, id), nil)

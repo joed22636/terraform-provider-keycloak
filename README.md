@@ -66,6 +66,8 @@ go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./p
 go test -v -run TestAccKeycloakUsersPermission_basic ./provider
 go test -v -run TestAccKeycloakAuthentication ./provider
 go test -v -run TestAccKeycloakAuthenticationFlow_createHardcodedFlow ./provider
+go test -v -run TestAccKeycloakCustomIdentityProviderMapper ./provider
+
 
 ```
 

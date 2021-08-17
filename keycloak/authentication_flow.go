@@ -116,21 +116,6 @@ func (keycloakClient *KeycloakClient) DeleteAuthenticationFlow(realmId, id strin
 		keycloakClient.UpdateAuthenticationFlow(flow)
 	}
 
-	/// it may not be a good idea to provide this error:
-	// realm, err := keycloakClient.GetRealm(realmId)
-	// if err != nil {
-	// 	return err
-	// }
-	// if realm.BrowserFlow == flow.Alias ||
-	// 	realm.ClientAuthenticationFlow == flow.Alias ||
-	// 	realm.DirectGrantFlow == flow.Alias ||
-	// 	realm.DockerAuthenticationFlow == flow.Alias ||
-	// 	realm.RegistrationFlow == flow.Alias ||
-	// 	realm.ResetCredentialsFlow == flow.Alias {
-
-	// 	return fmt.Errorf("%v is used as a default flow", flow.Alias)
-	// }
-
 	err = keycloakClient.delete(fmt.Sprintf("/realms/%s/authentication/flows/%s", realmId, id), nil)
 	if err != nil {
 		// For whatever reason, this fails sometimes with a 500 during acceptance tests. try again

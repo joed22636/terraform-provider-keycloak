@@ -62,13 +62,7 @@ Run specific test from CLI, e.g.:
 ```
 export TF_LOG=DEBUG                                                                    
 go test -v -run <name> <package>
-go test -v -run TestAccKeycloakCustomUserFederation_createAfterManualDestroy ./provider
-go test -v -run TestAccKeycloakUsersPermission_basic ./provider
 go test -v -run TestAccKeycloakAuthentication ./provider
-go test -v -run TestAccKeycloakAuthenticationFlow_createHardcodedFlow ./provider
-go test -v -run TestAccKeycloakCustomIdentityProviderMapper ./provider
-
-
 ```
 
 use keycloak/keycloak_client_test.go to debug http rest apis

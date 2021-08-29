@@ -141,7 +141,7 @@ func TestAccKeycloakRealmEvents_unsetEnabledEventTypes(t *testing.T) {
 	after := &keycloak.RealmEventsConfig{
 		AdminEventsDetailsEnabled: true,
 		AdminEventsEnabled:        true,
-		EnabledEventTypes:         []string{},
+		EnabledEventTypes:         []string{"LOGIN"}, // Keycloak API does not allow to set empty list. An empty list will bring back all the detault events
 		EventsEnabled:             true,
 		EventsExpiration:          1234,
 		EventsListeners:           []string{"jboss-logging"},
@@ -165,19 +165,8 @@ func TestAccKeycloakRealmEvents_unsetEnabledEventTypes(t *testing.T) {
 							return err
 						}
 
-						//keycloak versions < 7.0.0 have 63 events, versions >=7.0.0 have 67 events, versions >=12.0.0 have 69 events
-						if keycloakClient.VersionIsGreaterThanOrEqualTo(keycloak.Version_12) {
-							if len(realmEventsConfig.EnabledEventTypes) != 69 {
-								return fmt.Errorf("exptected to enabled_event_types to contain all(69) event types, but it contains %d", len(realmEventsConfig.EnabledEventTypes))
-							}
-						} else if keycloakClient.VersionIsGreaterThanOrEqualTo(keycloak.Version_7) {
-							if len(realmEventsConfig.EnabledEventTypes) != 67 {
-								return fmt.Errorf("exptected to enabled_event_types to contain all(67) event types, but it contains %d", len(realmEventsConfig.EnabledEventTypes))
-							}
-						} else {
-							if len(realmEventsConfig.EnabledEventTypes) != 63 {
-								return fmt.Errorf("exptected to enabled_event_types to contain all(63) event types, but it contains %d", len(realmEventsConfig.EnabledEventTypes))
-							}
+						if len(realmEventsConfig.EnabledEventTypes) != 1 {
+							return fmt.Errorf("exptected to enabled_event_types to contain all(69) event types, but it contains %d", len(realmEventsConfig.EnabledEventTypes))
 						}
 
 						return nil

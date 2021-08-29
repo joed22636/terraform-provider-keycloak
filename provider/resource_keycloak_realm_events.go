@@ -91,10 +91,11 @@ func setRealmEventsConfigData(data *schema.ResourceData, realmEventsConfig *keyc
 	data.Set("events_enabled", realmEventsConfig.EventsEnabled)
 	data.Set("events_expiration", realmEventsConfig.EventsExpiration)
 	data.Set("events_listeners", realmEventsConfig.EventsListeners)
+	data.Set("enabled_event_types", realmEventsConfig.EnabledEventTypes)
 
-	if _, ok := data.GetOk("enabled_event_types"); ok {
-		data.Set("enabled_event_types", realmEventsConfig.EnabledEventTypes)
-	}
+	// if _, ok := data.GetOk("enabled_event_types"); ok {
+	// 	data.Set("enabled_event_types", realmEventsConfig.EnabledEventTypes)
+	// }
 }
 
 func resourceKeycloakRealmEventsCreate(data *schema.ResourceData, meta interface{}) error {

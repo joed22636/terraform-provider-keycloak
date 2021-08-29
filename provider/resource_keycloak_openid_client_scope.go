@@ -67,7 +67,7 @@ func getClientScopeFromData(data *schema.ResourceData) *keycloak.OpenidClientSco
 		clientScope.Attributes.DisplayOnConsentScreen = false
 	}
 
-	clientScope.Attributes.IncludeInTokenScope = keycloak.KeycloakBoolQuoted(data.Get("include_in_token_scope").(bool))
+	clientScope.Attributes.IncludeInTokenScope = strconv.FormatBool(data.Get("include_in_token_scope").(bool))
 
 	// Treat 0 as an empty string for the purpose of omitting the attribute to reset the order
 	if guiOrder := data.Get("gui_order").(int); guiOrder != 0 {
@@ -88,7 +88,13 @@ func setClientScopeData(data *schema.ResourceData, clientScope *keycloak.OpenidC
 		data.Set("consent_screen_text", clientScope.Attributes.ConsentScreenText)
 	}
 
-	data.Set("include_in_token_scope", clientScope.Attributes.IncludeInTokenScope)
+	its, err := strconv.ParseBool(clientScope.Attributes.IncludeInTokenScope)
+	if err != nil {
+		data.Set("include_in_token_scope", true) // default value
+	} else {
+		data.Set("include_in_token_scope", its)
+	}
+
 	if guiOrder, err := strconv.Atoi(clientScope.Attributes.GuiOrder); err == nil {
 		data.Set("gui_order", guiOrder)
 	}

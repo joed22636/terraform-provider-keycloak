@@ -995,12 +995,13 @@ func setRealmData(data *schema.ResourceData, realm *keycloak.Realm) {
 		oldHeadersConfig := v.([]interface{})[0].(map[string]interface{})["headers"].([]interface{})
 		if len(oldHeadersConfig) == 0 && !realm.BruteForceProtected {
 			data.Set("security_defenses", nil)
-		} else if len(oldHeadersConfig) == 1 && realm.BruteForceProtected {
+
+		} else if len(oldHeadersConfig) > 0 && realm.BruteForceProtected {
 			securityDefensesSettings := make(map[string]interface{})
 			securityDefensesSettings["headers"] = []interface{}{getHeaderSettings(realm)}
 			securityDefensesSettings["brute_force_detection"] = []interface{}{getBruteForceDetectionSettings(realm)}
 			data.Set("security_defenses", []interface{}{securityDefensesSettings})
-		} else if len(oldHeadersConfig) == 1 {
+		} else if len(oldHeadersConfig) > 0 {
 			securityDefensesSettings := make(map[string]interface{})
 			securityDefensesSettings["headers"] = []interface{}{getHeaderSettings(realm)}
 			data.Set("security_defenses", []interface{}{securityDefensesSettings})
@@ -1018,10 +1019,10 @@ func setRealmData(data *schema.ResourceData, realm *keycloak.Realm) {
 		} else {
 			securityDefensesSettings := make(map[string]interface{})
 			headerSettings := getHeaderSettings(realm)
-			if len(headerSettings) > 1 {
+			if len(headerSettings) > 0 {
 				securityDefensesSettings["headers"] = []interface{}{headerSettings}
 			}
-			if len(securityDefensesSettings) > 1 {
+			if len(securityDefensesSettings) > 0 {
 				data.Set("security_defenses", []interface{}{securityDefensesSettings})
 			}
 		}
@@ -1089,13 +1090,27 @@ func getBruteForceDetectionSettings(realm *keycloak.Realm) map[string]interface{
 
 func getHeaderSettings(realm *keycloak.Realm) map[string]interface{} {
 	headersSettings := make(map[string]interface{})
-	headersSettings["content_security_policy"] = realm.BrowserSecurityHeaders.ContentSecurityPolicy
-	headersSettings["content_security_policy_report_only"] = realm.BrowserSecurityHeaders.ContentSecurityPolicyReportOnly
-	headersSettings["strict_transport_security"] = realm.BrowserSecurityHeaders.StrictTransportSecurity
-	headersSettings["x_content_type_options"] = realm.BrowserSecurityHeaders.XContentTypeOptions
-	headersSettings["x_frame_options"] = realm.BrowserSecurityHeaders.XFrameOptions
-	headersSettings["x_robots_tag"] = realm.BrowserSecurityHeaders.XRobotsTag
-	headersSettings["x_xss_protection"] = realm.BrowserSecurityHeaders.XXSSProtection
+	if len(realm.BrowserSecurityHeaders.ContentSecurityPolicy) > 0 {
+		headersSettings["content_security_policy"] = realm.BrowserSecurityHeaders.ContentSecurityPolicy
+	}
+	if len(realm.BrowserSecurityHeaders.ContentSecurityPolicyReportOnly) > 0 {
+		headersSettings["content_security_policy_report_only"] = realm.BrowserSecurityHeaders.ContentSecurityPolicyReportOnly
+	}
+	if len(realm.BrowserSecurityHeaders.StrictTransportSecurity) > 0 {
+		headersSettings["strict_transport_security"] = realm.BrowserSecurityHeaders.StrictTransportSecurity
+	}
+	if len(realm.BrowserSecurityHeaders.XContentTypeOptions) > 0 {
+		headersSettings["x_content_type_options"] = realm.BrowserSecurityHeaders.XContentTypeOptions
+	}
+	if len(realm.BrowserSecurityHeaders.XFrameOptions) > 0 {
+		headersSettings["x_frame_options"] = realm.BrowserSecurityHeaders.XFrameOptions
+	}
+	if len(realm.BrowserSecurityHeaders.XRobotsTag) > 0 {
+		headersSettings["x_robots_tag"] = realm.BrowserSecurityHeaders.XRobotsTag
+	}
+	if len(realm.BrowserSecurityHeaders.XXSSProtection) > 0 {
+		headersSettings["x_xss_protection"] = realm.BrowserSecurityHeaders.XXSSProtection
+	}
 	return headersSettings
 }
 
@@ -1138,10 +1153,10 @@ func resourceKeycloakRealmRead(data *schema.ResourceData, meta interface{}) erro
 		return handleNotFoundError(err, data)
 	}
 
-	// we can't trust the API to set this field correctly since it just responds with "**********" this implies a 'password only' change will not detected
-	if smtpPassword, ok := getRealmSMTPPasswordFromData(data); ok {
-		realm.SmtpServer.Password = smtpPassword
-	}
+	// // we can't trust the API to set this field correctly since it just responds with "**********" this implies a 'password only' change will not detected
+	// if smtpPassword, ok := getRealmSMTPPasswordFromData(data); ok {
+	// 	realm.SmtpServer.Password = smtpPassword
+	// }
 
 	setRealmData(data, realm)
 

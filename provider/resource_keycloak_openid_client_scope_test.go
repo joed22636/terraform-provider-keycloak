@@ -138,7 +138,6 @@ func TestAccKeycloakClientScope_consentScreenText(t *testing.T) {
 func TestAccKeycloakClientScope_includeInTokenScope(t *testing.T) {
 	t.Parallel()
 	clientScopeName := acctest.RandomWithPrefix("tf-acc")
-	includeInTokenScope := false
 
 	resource.Test(t, resource.TestCase{
 		ProviderFactories: testAccProviderFactories,
@@ -147,13 +146,23 @@ func TestAccKeycloakClientScope_includeInTokenScope(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testKeycloakClientScope_basic(clientScopeName),
-				Check:  testAccCheckKeycloakClientScopeExistsWithCorrectProtocol("keycloak_openid_client_scope.client_scope"),
-			},
-			{
-				Config: testKeycloakClientScope_withIncludeInTokenScope(clientScopeName, includeInTokenScope),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckKeycloakClientScopeExistsWithCorrectProtocol("keycloak_openid_client_scope.client_scope"),
-					testAccCheckKeycloakClientScopeExistsWithCorrectIncludeInTokenScope("keycloak_openid_client_scope.client_scope", includeInTokenScope),
+					testAccCheckKeycloakClientScopeExistsWithCorrectIncludeInTokenScope("keycloak_openid_client_scope.client_scope", true),
+				),
+			},
+			{
+				Config: testKeycloakClientScope_withIncludeInTokenScope(clientScopeName, false),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckKeycloakClientScopeExistsWithCorrectProtocol("keycloak_openid_client_scope.client_scope"),
+					testAccCheckKeycloakClientScopeExistsWithCorrectIncludeInTokenScope("keycloak_openid_client_scope.client_scope", false),
+				),
+			},
+			{
+				Config: testKeycloakClientScope_withIncludeInTokenScope(clientScopeName, true),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckKeycloakClientScopeExistsWithCorrectProtocol("keycloak_openid_client_scope.client_scope"),
+					testAccCheckKeycloakClientScopeExistsWithCorrectIncludeInTokenScope("keycloak_openid_client_scope.client_scope", true),
 				),
 			},
 			{
@@ -215,8 +224,8 @@ func testAccCheckKeycloakClientScopeExistsWithCorrectIncludeInTokenScope(resourc
 			return err
 		}
 
-		if clientScope.Attributes.IncludeInTokenScope != keycloak.KeycloakBoolQuoted(includeInTokenScope) {
-			return fmt.Errorf("expected saml client includeInTokenScope to have %t, but got %t", includeInTokenScope, clientScope.Attributes.IncludeInTokenScope)
+		if clientScope.Attributes.IncludeInTokenScope != strconv.FormatBool(includeInTokenScope) {
+			return fmt.Errorf("expected saml client includeInTokenScope to have %t, but got %s", includeInTokenScope, clientScope.Attributes.IncludeInTokenScope)
 		}
 
 		return nil

@@ -156,5 +156,6 @@ func setOidcIdentityProviderData(data *schema.ResourceData, identityProvider *ke
 	data.Set("default_scopes", identityProvider.Config.DefaultScope)
 	data.Set("provider_id", identityProvider.ProviderId)
 	data.Set("accepts_prompt_none_forward_from_client", identityProvider.Config.AcceptsPromptNoneForwFrmClt)
+	data.Set("client_secret", identityProvider.Config.ClientSecret)
 	return nil
 }

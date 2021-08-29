@@ -14,7 +14,7 @@ type OpenidClientScope struct {
 		DisplayOnConsentScreen KeycloakBoolQuoted `json:"display.on.consent.screen"` // boolean in string form
 		ConsentScreenText      string             `json:"consent.screen.text"`
 		GuiOrder               string             `json:"gui.order"`
-		IncludeInTokenScope    KeycloakBoolQuoted `json:"include.in.token.scope"` // boolean in string form
+		IncludeInTokenScope    string             `json:"include.in.token.scope"` // boolean in string form but can be null/empty
 	} `json:"attributes"`
 }
 

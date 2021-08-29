@@ -521,7 +521,7 @@ func resourceKeycloakLdapUserFederationRead(data *schema.ResourceData, meta inte
 		return handleNotFoundError(err, data)
 	}
 
-	ldap.BindCredential = data.Get("bind_credential").(string) // we can't trust the API to set this field correctly since it just responds with "**********"
+	// ldap.BindCredential = data.Get("bind_credential").(string) // we can't trust the API to set this field correctly since it just responds with "**********"
 	setLdapUserFederationData(data, ldap)
 
 	return nil

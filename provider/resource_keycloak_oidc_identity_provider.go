@@ -17,7 +17,7 @@ func resourceKeycloakOidcIdentityProvider() *schema.Resource {
 		"backchannel_supported": {
 			Type:        schema.TypeBool,
 			Optional:    true,
-			Default:     true,
+			Default:     false,
 			Description: "Does the external IDP support backchannel logout?",
 		},
 		"validate_signature": {
@@ -37,9 +37,12 @@ func resourceKeycloakOidcIdentityProvider() *schema.Resource {
 			Description: "Client ID.",
 		},
 		"client_secret": {
-			Type:        schema.TypeString,
-			Required:    true,
-			Sensitive:   true,
+			Type:      schema.TypeString,
+			Required:  true,
+			Sensitive: true,
+			DiffSuppressFunc: func(_, remoteSecret, _ string, _ *schema.ResourceData) bool {
+				return remoteSecret == "**********"
+			},
 			Description: "Client Secret.",
 		},
 		"user_info_url": {

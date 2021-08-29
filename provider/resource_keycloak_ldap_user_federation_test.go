@@ -533,11 +533,11 @@ func TestAccKeycloakLdapUserFederation_bindCredential(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testKeycloakLdapUserFederation_bindCredential(ldapName, firstBindCredential),
-				Check:  resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "bind_credential", firstBindCredential),
+				Check:  resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "bind_credential", "**********"),
 			},
 			{
 				Config: testKeycloakLdapUserFederation_bindCredential(ldapName, secondBindCredential),
-				Check:  resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "bind_credential", secondBindCredential),
+				Check:  resource.TestCheckResourceAttr("keycloak_ldap_user_federation.openldap", "bind_credential", "**********"),
 			},
 		},
 	})
